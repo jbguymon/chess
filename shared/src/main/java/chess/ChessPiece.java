@@ -56,6 +56,8 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         List<ChessMove> legalMoves = new java.util.ArrayList<>(List.of());
+
+        //implement bishop and half of the queen code
         if (piece.getPieceType() == PieceType.BISHOP || piece.getPieceType() == PieceType.QUEEN) {
             for(int i = 1; i < 8; i++){
                 if(row + i > 8 || col + i > 8){
@@ -118,6 +120,8 @@ public class ChessPiece {
                 }
             }
         }
+
+        //implemented moves for knight
         if (piece.getPieceType() == PieceType.KNIGHT){
             if(row + 2 <= 8){
                 if(col + 1 <= 8){
@@ -192,6 +196,8 @@ public class ChessPiece {
                 }
             }
         }
+
+        //implemented moves for rook and other half of queen
         if (piece.getPieceType() == PieceType.ROOK || piece.getPieceType() == PieceType.QUEEN){
             for(int i = 1; i < 8; i++){
                 if(row + i > 8){
@@ -254,6 +260,8 @@ public class ChessPiece {
                 }
             }
         }
+
+        //implemented moves for pawn
         if (piece.getPieceType() == PieceType.PAWN) {
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 if (row != 7) {
@@ -373,6 +381,8 @@ public class ChessPiece {
                 }
             }
         }
+
+        //implemented moves for king
         if (piece.getPieceType() == PieceType.KING){
             if(row + 1 <= 8){
                 if(board.getPiece(new ChessPosition(row + 1, col)) == null) {
