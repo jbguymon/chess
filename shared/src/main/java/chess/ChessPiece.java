@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,6 +52,131 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece piece = board.getPiece(myPosition);
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        List<ChessMove> legalMoves =  Arrays.asList();
+        if (piece.getPieceType() == PieceType.BISHOP) {
+
+        }
+        else if (piece.getPieceType() == PieceType.KNIGHT){
+
+        }
+        else if (piece.getPieceType() == PieceType.ROOK){
+
+        }
+        else if (piece.getPieceType() == PieceType.PAWN){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if (row != 7) {
+                    if(board.getPiece(new ChessPosition(row + 1, col)) == null) {
+                        legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col)));
+                        if (row == 2) {
+                            if (board.getPiece(new ChessPosition(row + 2, col)) == null) {
+                                legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col)));
+                            }
+                        }
+                    }
+                    if(col != 1){
+                        if(board.getPiece(new ChessPosition(row + 1, col - 1)) != null){
+                            legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1)));
+                        }
+                    }
+                    if(col != 8){
+                        if(board.getPiece(new ChessPosition(row + 1, col + 1)) != null){
+                            legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col + 1)));
+                        }
+                    }
+                }
+                else{
+                    if(board.getPiece(new ChessPosition(row + 1, col)) == null) {
+                        for(PieceType PT : PieceType.values()){
+                            if (PT == PieceType.KING || PT == PieceType.PAWN){
+                                continue;
+                            }
+                            legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col), PT));
+                        }
+                    }
+                    if(col != 1){
+                        if(board.getPiece(new ChessPosition(row + 1, col - 1)) != null){
+                            for(PieceType PT : PieceType.values()){
+                                if (PT == PieceType.KING || PT == PieceType.PAWN){
+                                    continue;
+                                }
+                                legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1), PT));
+                            }
+                        }
+                    }
+                    if(col != 8){
+                        if(board.getPiece(new ChessPosition(row + 1, col + 1)) != null){
+                            for(PieceType PT : PieceType.values()){
+                                if (PT == PieceType.KING || PT == PieceType.PAWN){
+                                    continue;
+                                }
+                                legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col + 1), PT));
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                if (row != 2) {
+                    if(board.getPiece(new ChessPosition(row - 1, col)) == null) {
+                        legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col)));
+                        if (row == 7) {
+                            if (board.getPiece(new ChessPosition(row - 2, col)) == null) {
+                                legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 2, col)));
+                            }
+                        }
+                    }
+                    if(col != 1){
+                        if(board.getPiece(new ChessPosition(row - 1, col - 1)) != null){
+                            legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col - 1)));
+                        }
+                    }
+                    if(col != 8){
+                        if(board.getPiece(new ChessPosition(row - 1, col + 1)) != null){
+                            legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col + 1)));
+                        }
+                    }
+                }
+                else{
+                    if(board.getPiece(new ChessPosition(row - 1, col)) == null) {
+                        for(PieceType PT : PieceType.values()){
+                            if (PT == PieceType.KING || PT == PieceType.PAWN){
+                                continue;
+                            }
+                            legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col), PT));
+                        }
+                    }
+                    if(col != 1){
+                        if(board.getPiece(new ChessPosition(row - 1, col - 1)) != null){
+                            for(PieceType PT : PieceType.values()){
+                                if (PT == PieceType.KING || PT == PieceType.PAWN){
+                                    continue;
+                                }
+                                legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col - 1), PT));
+                            }
+                        }
+                    }
+                    if(col != 8){
+                        if(board.getPiece(new ChessPosition(row - 1, col + 1)) != null){
+                            for(PieceType PT : PieceType.values()){
+                                if (PT == PieceType.KING || PT == PieceType.PAWN){
+                                    continue;
+                                }
+                                legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col + 1), PT));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (piece.getPieceType() == PieceType.QUEEN){
+
+        }
+        else if (piece.getPieceType() == PieceType.KING){
+
+        }
+        return legalMoves;
     }
 }
