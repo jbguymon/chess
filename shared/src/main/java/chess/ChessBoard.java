@@ -43,6 +43,35 @@ public class ChessBoard {
      */
     public void resetBoard() {
         squares = new ChessPiece[8][8];
+        for(int i = 0; i < 8; i += 7) {
+            ChessGame.TeamColor color;
+            if(i == 0){
+                color = ChessGame.TeamColor.WHITE;
+            }
+            else{
+                color = ChessGame.TeamColor.BLACK;
+            }
+            squares[i][0] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+            squares[i][1] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+            squares[i][2] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+            squares[i][3] = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
+            squares[i][4] = new ChessPiece(color, ChessPiece.PieceType.KING);
+            squares[i][5] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+            squares[i][6] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+            squares[i][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        }
+        for(int i = 1; i < 8; i += 5){
+            ChessGame.TeamColor color;
+            if(i == 1){
+                color = ChessGame.TeamColor.WHITE;
+            }
+            else{
+                color = ChessGame.TeamColor.BLACK;
+            }
+            for(int j = 0; j < 8; j++){
+                squares[i][j] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+            }
+        }
     }
 
     @Override
