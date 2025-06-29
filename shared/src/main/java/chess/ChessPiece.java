@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -68,6 +69,7 @@ public class ChessPiece {
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + i, col + i)));
                         break;
                     }
+                    break;
                 }
             }
             for(int i = 1; i < 8; i++){
@@ -82,6 +84,7 @@ public class ChessPiece {
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - i, col + i)));
                         break;
                     }
+                    break;
                 }
             }
             for(int i = 1; i < 8; i++){
@@ -96,6 +99,7 @@ public class ChessPiece {
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + i, col - i)));
                         break;
                     }
+                    break;
                 }
             }
             for(int i = 1; i < 8; i++){
@@ -106,10 +110,11 @@ public class ChessPiece {
                     legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - i, col - i)));
                 }
                 else{
-                    if(board.getPiece(new ChessPosition(row + i, col + i)).pieceColor != piece.pieceColor){
+                    if(board.getPiece(new ChessPosition(row - i, col - i)).pieceColor != piece.pieceColor){
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - i, col - i)));
                         break;
                     }
+                    break;
                 }
             }
         }
@@ -188,7 +193,7 @@ public class ChessPiece {
             }
         }
         if (piece.getPieceType() == PieceType.ROOK || piece.getPieceType() == PieceType.QUEEN){
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(row + i > 8){
                     break;
                 }
@@ -200,9 +205,10 @@ public class ChessPiece {
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row + i, col)));
                         break;
                     }
+                    break;
                 }
             }
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(row - i <= 0){
                     break;
                 }
@@ -214,9 +220,10 @@ public class ChessPiece {
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row - i, col)));
                         break;
                     }
+                    break;
                 }
             }
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(col + i > 8){
                     break;
                 }
@@ -224,14 +231,15 @@ public class ChessPiece {
                     legalMoves.add(new ChessMove(myPosition, new ChessPosition(row, col + i)));
                 }
                 else{
-                    if(board.getPiece(new ChessPosition(row + i, col)).pieceColor != piece.pieceColor){
+                    if(board.getPiece(new ChessPosition(row, col + i)).pieceColor != piece.pieceColor){
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row, col + i)));
                         break;
                     }
+                    break;
                 }
             }
-            for(int i = 0; i < 8; i++){
-                if(col - i > 8){
+            for(int i = 1; i < 8; i++){
+                if(col - i <= 0){
                     break;
                 }
                 if(board.getPiece(new ChessPosition(row, col - i)) == null){
@@ -242,6 +250,7 @@ public class ChessPiece {
                         legalMoves.add(new ChessMove(myPosition, new ChessPosition(row, col - i)));
                         break;
                     }
+                    break;
                 }
             }
         }
@@ -431,5 +440,19 @@ public class ChessPiece {
             }
         }
         return legalMoves;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
