@@ -26,6 +26,10 @@ public class ChessBoard {
         gameBoard[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
+    /**
+     * Removes a chess piece from the chessboard
+     * @param position where to remove piece
+     */
     public void removePiece(ChessPosition position){
         gameBoard[position.getRow()-1][position.getColumn()-1] = null;
     }
