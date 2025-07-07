@@ -95,7 +95,17 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for(int i = 1; i < 9; i++){
+            for(int j = 1; j < 9; j++){
+                if(board.getPiece(new ChessPosition(i, j)) == null){
+                    continue;
+                }
+                if(board.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor){
+                    return isSpaceAttacked(new ChessPosition(i, j), teamColor);
+                }
+            }
+        }
+        return false;
     }
 
     /**
