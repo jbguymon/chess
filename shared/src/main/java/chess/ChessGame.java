@@ -67,16 +67,24 @@ public class ChessGame {
                 if(move.getPromotionPiece() == null){
                     board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
                     board.removePiece(move.getStartPosition());
+
                 }
                 else{
                     ChessPiece promPiece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
                     board.addPiece(move.getEndPosition(), promPiece);
                     board.removePiece(move.getStartPosition());
+
                 }
             }
             else{
                 throw new InvalidMoveException("You did not make a valid move");
             }
+        }
+        if(board.getPiece(move.getEndPosition()).getTeamColor() == TeamColor.BLACK){
+            setTeamTurn(TeamColor.WHITE);
+        }
+        else{
+            setTeamTurn(TeamColor.BLACK);
         }
     }
 
