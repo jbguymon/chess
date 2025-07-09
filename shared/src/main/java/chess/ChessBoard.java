@@ -15,13 +15,13 @@ public class ChessBoard {
     public ChessBoard() {
         
     }
-
     /**
      * Adds a chess piece to the chessboard
      *
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
+
     public void addPiece(ChessPosition position, ChessPiece piece) {
         gameBoard[position.getRow()-1][position.getColumn()-1] = piece;
     }

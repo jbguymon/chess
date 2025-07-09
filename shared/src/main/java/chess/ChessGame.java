@@ -1,6 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -48,7 +51,34 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        List<ChessMove> legalMoves = new ArrayList<>(List.of());
+        List<ChessMove> loopMoves;
+        if(board.getPiece(startPosition) == null){
+            return legalMoves;
+        }
+        else{
+            ChessPiece myPiece = board.getPiece(startPosition);
+            loopMoves = (List<ChessMove>) myPiece.pieceMoves(board, startPosition);
+
+            for (ChessMove move : loopMoves) {
+                if (move.getPromotionPiece() == null) {
+                    board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                    board.removePiece(move.getStartPosition());
+
+                } else {
+                    ChessPiece promPiece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+                    board.addPiece(move.getEndPosition(), promPiece);
+                    board.removePiece(move.getStartPosition());
+
+                }
+                if (!isInCheck(myPiece.getTeamColor())) {
+                    legalMoves.add(move);
+                }
+                board.addPiece(startPosition, myPiece);
+                board.removePiece(move.getEndPosition());
+            }
+        }
+        return legalMoves;
     }
 
     /**
@@ -58,6 +88,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(board.getPiece(move.getStartPosition()) == null){
+            throw new InvalidMoveException("There is no piece at this position");
+        }
         if(board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()){
             throw new InvalidMoveException("It is not this piece's turn");
         }
@@ -456,6 +489,20 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(board);
     }
 }
 
