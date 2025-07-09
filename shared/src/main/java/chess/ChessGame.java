@@ -13,10 +13,10 @@ import java.util.Objects;
  */
 public class ChessGame {
     private static TeamColor teamTurnColor;
-    private final ChessBoard board;
+    ChessBoard board = new ChessBoard();
     public ChessGame() {
         teamTurnColor = TeamColor.WHITE;
-        board = new ChessBoard();
+        board.resetBoard();
     }
 
     /**
@@ -202,7 +202,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board.resetBoard();
+        this.board = board;
     }
 
     /**
@@ -328,22 +328,23 @@ public class ChessGame {
                 }
             }
         }
-        if(col - 2 > 0){
-            if(row + 1 <= 8){
-                if(board.getPiece(new ChessPosition(row + 1, col - 2)) != null) {
-                    if(board.getPiece(new ChessPosition(row + 1, col - 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row + 1, col - 2 )).getTeamColor() != color){
-                        return true;
-                    }
-                }
-                }
-            }
-            if(row - 1 > 0){
-                if(board.getPiece(new ChessPosition(row - 1, col - 2)) != null) {
-                    if(board.getPiece(new ChessPosition(row - 1, col - 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row - 1, col - 2 )).getTeamColor() != color){
+        if(col - 2 > 0) {
+            if (row + 1 <= 8) {
+                if (board.getPiece(new ChessPosition(row + 1, col - 2)) != null) {
+                    if (board.getPiece(new ChessPosition(row + 1, col - 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row + 1, col - 2)).getTeamColor() != color) {
                         return true;
                     }
                 }
             }
+
+            if (row - 1 > 0) {
+                if (board.getPiece(new ChessPosition(row - 1, col - 2)) != null) {
+                    if (board.getPiece(new ChessPosition(row - 1, col - 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row - 1, col - 2)).getTeamColor() != color) {
+                        return true;
+                    }
+                }
+            }
+        }
         for(int i = 1; i < 8; i++) {
             if (row + i > 8) {
                 break;
