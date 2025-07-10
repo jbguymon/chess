@@ -504,16 +504,19 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || this.getClass() != o.getClass()) {
             return false;
         }
+        if(o == this){
+            return true;
+        }
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board);
+        return Objects.equals(board, chessGame.board) && Objects.equals(teamTurnColor, chessGame.getTeamTurn());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(board);
+        return Objects.hashCode(board) * 31 + Objects.hashCode(teamTurnColor);
     }
 }
 
