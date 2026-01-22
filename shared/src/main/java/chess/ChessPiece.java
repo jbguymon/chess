@@ -278,7 +278,7 @@ public class ChessPiece {
             }
         }
         if(piece.type == PieceType.BISHOP || piece.type == PieceType.QUEEN){
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(row + i > 8 || col + i > 8){
                     break;
                 }
@@ -293,7 +293,7 @@ public class ChessPiece {
                     break;
                 }
             }
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(row - i < 1 || col + i > 8){
                     break;
                 }
@@ -308,7 +308,7 @@ public class ChessPiece {
                     break;
                 }
             }
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(row + i > 8 || col - i < 1){
                     break;
                 }
@@ -323,7 +323,7 @@ public class ChessPiece {
                     break;
                 }
             }
-            for(int i = 0; i < 8; i++){
+            for(int i = 1; i < 8; i++){
                 if(row - i < 1 || col - i < 1){
                     break;
                 }
