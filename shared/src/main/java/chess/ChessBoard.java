@@ -58,7 +58,7 @@ public class ChessBoard {
             gameBoard[i][3] = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
             gameBoard[i][4] = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         }
-        for(int i = 0; i < 7; i += 5){
+        for(int i = 1; i < 8; i += 5){
             ChessGame.TeamColor teamColor;
             if(i == 1){
                 teamColor = ChessGame.TeamColor.WHITE;
