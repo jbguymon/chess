@@ -338,6 +338,71 @@ public class ChessGame {
                 break;
             }
         }
+        //Knight Check
+        if(row + 2 < 9){
+            if(col + 1 < 9){
+                if(board.getPiece(new ChessPosition(row + 2, col + 1)) != null){
+                    if(board.getPiece(new ChessPosition(row + 2, col + 1)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row + 2, col + 1)).getTeamColor() != color){
+                        return true;
+                    }
+                }
+            }
+            if(col - 1 > 0){
+                if(board.getPiece(new ChessPosition(row + 2, col - 1)) != null) {
+                    if (board.getPiece(new ChessPosition(row + 2, col - 1)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row + 2, col - 1)).getTeamColor() != color) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if(row - 2 > 0){
+            if(col + 1 < 9){
+                if(board.getPiece(new ChessPosition(row - 2, col + 1)) != null){
+                    if(board.getPiece(new ChessPosition(row - 2, col + 1)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row - 2, col + 1)).getTeamColor() != color){
+                        return true;
+                    }
+                }
+            }
+            if(col - 1 > 0){
+                if(board.getPiece(new ChessPosition(row - 2, col - 1)) != null) {
+                    if (board.getPiece(new ChessPosition(row - 2, col - 1)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row - 2, col - 1)).getTeamColor() != color) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if(col + 2 < 9){
+            if(row + 1 < 9){
+                if(board.getPiece(new ChessPosition(row + 1, col + 2)) != null){
+                    if(board.getPiece(new ChessPosition(row + 1, col + 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row + 1, col + 2)).getTeamColor() != color){
+                        return true;
+                    }
+                }
+            }
+            if(row - 1 > 0){
+                if(board.getPiece(new ChessPosition(row - 1, col + 2)) != null) {
+                    if (board.getPiece(new ChessPosition(row - 1, col + 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row - 1, col + 2)).getTeamColor() != color) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if(col - 2 > 0){
+            if(row + 1 < 9){
+                if(board.getPiece(new ChessPosition(row + 1, col - 2)) != null){
+                    if(board.getPiece(new ChessPosition(row + 1, col - 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row + 1, col - 2)).getTeamColor() != color){
+                        return true;
+                    }
+                }
+            }
+            if(row - 1 > 0){
+                if(board.getPiece(new ChessPosition(row - 1, col - 2)) != null) {
+                    if (board.getPiece(new ChessPosition(row - 1, col - 2)).getPieceType() == ChessPiece.PieceType.KNIGHT && board.getPiece(new ChessPosition(row - 1, col - 2)).getTeamColor() != color) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 }
