@@ -53,7 +53,35 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         List<ChessMove> legalMoves = new ArrayList<>(List.of());
+        List<ChessMove> loopMoves;
+        if(board.getPiece(startPosition) == null){
+            return legalMoves;
+        }
+        else{
+            ChessPiece myPiece = board.getPiece(startPosition);
+            loopMoves = (List<ChessMove>) myPiece.pieceMoves(board, startPosition);
 
+            for (ChessMove move : loopMoves){
+                ChessPiece takenPiece = board.getPiece(move.getEndPosition());
+                if(move.getPromotionPiece() == null){
+                    board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                    board.removePiece(move.getStartPosition());
+                }
+                else{
+                    ChessPiece proPiece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+                    board.addPiece(move.getEndPosition(), proPiece);
+                    board.removePiece(move.getStartPosition());
+                }
+                if(!isInCheck(myPiece.getTeamColor())){
+                    legalMoves.add(move);
+                }
+                board.addPiece(startPosition, myPiece);
+                board.removePiece(move.getEndPosition());
+                if(takenPiece != null){
+                    board.addPiece(move.getEndPosition(), takenPiece);
+                }
+            }
+        }
         return legalMoves;
     }
 
