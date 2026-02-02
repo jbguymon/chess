@@ -460,6 +460,44 @@ public class ChessGame {
                 }
             }
         }
+        //Pawn Section
+        if(color == TeamColor.BLACK){
+            if(row - 1 > 0){
+                if(col - 1 > 0){
+                    if(board.getPiece(new ChessPosition(row - 1, col - 1)) != null){
+                        if(board.getPiece(new ChessPosition(row - 1, col - 1)).getTeamColor() != color && board.getPiece(new ChessPosition(row - 1, col - 1)).getPieceType() == ChessPiece.PieceType.PAWN){
+                            return true;
+                        }
+                    }
+                }
+                if(col + 1 < 9){
+                    if(board.getPiece(new ChessPosition(row - 1, col + 1)) != null){
+                        if(board.getPiece(new ChessPosition(row - 1, col + 1)).getTeamColor() != color && board.getPiece(new ChessPosition(row - 1, col + 1)).getPieceType() == ChessPiece.PieceType.PAWN){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            if(row + 1 > 0){
+                if(col - 1 > 0){
+                    if(board.getPiece(new ChessPosition(row + 1, col - 1)) != null){
+                        if(board.getPiece(new ChessPosition(row + 1, col - 1)).getTeamColor() != color && board.getPiece(new ChessPosition(row + 1, col - 1)).getPieceType() == ChessPiece.PieceType.PAWN){
+                            return true;
+                        }
+                    }
+                }
+                if(col + 1 < 9){
+                    if(board.getPiece(new ChessPosition(row + 1, col + 1)) != null){
+                        if(board.getPiece(new ChessPosition(row + 1, col + 1)).getTeamColor() != color && board.getPiece(new ChessPosition(row + 1, col + 1)).getPieceType() == ChessPiece.PieceType.PAWN){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
+
 }
