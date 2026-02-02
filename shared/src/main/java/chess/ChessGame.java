@@ -480,7 +480,7 @@ public class ChessGame {
             }
         }
         else{
-            if(row + 1 > 0){
+            if(row + 1 < 9){
                 if(col - 1 > 0){
                     if(board.getPiece(new ChessPosition(row + 1, col - 1)) != null){
                         if(board.getPiece(new ChessPosition(row + 1, col - 1)).getTeamColor() != color && board.getPiece(new ChessPosition(row + 1, col - 1)).getPieceType() == ChessPiece.PieceType.PAWN){
