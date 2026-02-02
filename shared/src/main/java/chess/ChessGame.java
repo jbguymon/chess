@@ -222,6 +222,66 @@ public class ChessGame {
      * @return whether the space is attacked or not
      */
     public boolean isSpaceAttacked(ChessPosition pos, TeamColor color){
-        throw new RuntimeException("Not implemented");
+        int row = pos.getRow();
+        int col = pos.getColumn();
+        //Bishop and Queen Check
+        for(int i = 1; i < 8; i++){
+            if(row + i > 8 || col + i > 8){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row + i, col + i)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row + i, col + i));
+                if(myPiece.getTeamColor() == color){
+                    break;
+                }
+                if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.BISHOP){
+                    return true;
+                }
+            }
+        }
+        for(int i = 1; i < 8; i++){
+            if(row - i < 1 || col + i > 8){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row - i, col + i)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row - i, col + i));
+                if(myPiece.getTeamColor() == color){
+                    break;
+                }
+                if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.BISHOP){
+                    return true;
+                }
+            }
+        }
+        for(int i = 1; i < 8; i++){
+            if(row + i > 8 || col - i < 1){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row + i, col - i)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row + i, col - i));
+                if(myPiece.getTeamColor() == color){
+                    break;
+                }
+                if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.BISHOP){
+                    return true;
+                }
+            }
+        }
+        for(int i = 1; i < 8; i++){
+            if(row - i < 1 || col - i < 1){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row - i, col - i)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row - i, col - i));
+                if(myPiece.getTeamColor() == color){
+                    break;
+                }
+                if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.BISHOP){
+                    return true;
+                }
+            }
+        }
+        //Rook and Queen Check
+        return false;
     }
 }
