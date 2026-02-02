@@ -282,6 +282,62 @@ public class ChessGame {
             }
         }
         //Rook and Queen Check
+        for(int i = 1; i < 8; i++){
+            if(row + i > 8){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row + i, col)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row + i, col));
+                if(myPiece.getTeamColor() != color){
+                    if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.ROOK){
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = 1; i < 8; i++){
+            if(row - i < 1){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row - i, col)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row - i, col));
+                if(myPiece.getTeamColor() != color){
+                    if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.ROOK){
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = 1; i < 8; i++){
+            if(col + i > 8){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row, col + i)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row, col + i));
+                if(myPiece.getTeamColor() != color){
+                    if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.ROOK){
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        for(int i = 1; i < 8; i++){
+            if(col - i < 1){
+                break;
+            }
+            if(board.getPiece(new ChessPosition(row, col - i)) != null){
+                ChessPiece myPiece = board.getPiece(new ChessPosition(row, col - i));
+                if(myPiece.getTeamColor() != color){
+                    if(myPiece.getPieceType() == ChessPiece.PieceType.QUEEN || myPiece.getPieceType() == ChessPiece.PieceType.ROOK){
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
         return false;
     }
 }
