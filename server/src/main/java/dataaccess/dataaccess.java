@@ -5,7 +5,7 @@ import model.*;
 import javax.xml.crypto.Data;
 import java.util.List;
 
-public class dataaccess {
+public interface dataaccess {
     public interface UserDAO {
         void clear() throws DataAccessException;
         void createUser(UserData user) throws DataAccessException;
