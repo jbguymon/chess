@@ -23,7 +23,11 @@ public class UserHandler {
             context.json(result);
         } catch (Exception exception){
             String message = exception.getMessage() != null ? exception.getMessage() : "unknown error";
-            context.status(message.equals("Username already taken") ? 403 : 400);
+            int errorStatus = switch (message) {
+                case "Username already taken" -> 403;
+                case "Bad request" -> 400;
+                default -> 500;
+            };
             context.json("{\"message\":\"Error: " + message + "\"}");
         }
     }

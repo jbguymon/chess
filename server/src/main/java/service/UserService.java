@@ -13,7 +13,7 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest request) throws Exception{
         if(request.username() == null || request.password() == null){
-            throw new Exception("request is bad, either username or password is null");
+            throw new Exception("Bad request");
         }
         if(data.getUser(request.username()) != null){
             throw new Exception("Username already taken");
