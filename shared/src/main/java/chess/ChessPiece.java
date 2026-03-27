@@ -45,7 +45,6 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         List<ChessMove> legalMoves = new ArrayList<>();
         ChessPiece piece = board.getPiece(myPosition);
-
         switch (piece.getPieceType()) {
             case KING   -> addKingMoves(board, myPosition, legalMoves);
             case KNIGHT -> addKnightMoves(board, myPosition, legalMoves);
@@ -57,7 +56,6 @@ public class ChessPiece {
             }
             case PAWN   -> addPawnMoves(board, myPosition, legalMoves);
         }
-
         return legalMoves;
     }
 
@@ -72,24 +70,9 @@ public class ChessPiece {
         }
     }
 
-    private void addIfValidWithPromotion(ChessBoard board, ChessPosition from, ChessPosition to, List<ChessMove> moves) {
-        if (to.getRow() < 1 || to.getRow() > 8 || to.getColumn() < 1 || to.getColumn() > 8) {
-            return;
-        }
-        ChessPiece target = board.getPiece(to);
-        if (target == null || target.getTeamColor() != pieceColor) {
-            moves.add(new ChessMove(from, to, PieceType.QUEEN));
-            moves.add(new ChessMove(from, to, PieceType.ROOK));
-            moves.add(new ChessMove(from, to, PieceType.BISHOP));
-            moves.add(new ChessMove(from, to, PieceType.KNIGHT));
-        }
-    }
-
     private void addKingMoves(ChessBoard board, ChessPosition pos, List<ChessMove> moves) {
         int r = pos.getRow();
         int c = pos.getColumn();
-
-        // all 8 directions, max 1 step
         addIfValid(board, pos, new ChessPosition(r + 1, c), moves);
         addIfValid(board, pos, new ChessPosition(r - 1, c), moves);
         addIfValid(board, pos, new ChessPosition(r, c + 1), moves);
@@ -103,7 +86,6 @@ public class ChessPiece {
     private void addKnightMoves(ChessBoard board, ChessPosition pos, List<ChessMove> moves) {
         int r = pos.getRow();
         int c = pos.getColumn();
-
         addIfValid(board, pos, new ChessPosition(r + 2, c + 1), moves);
         addIfValid(board, pos, new ChessPosition(r + 2, c - 1), moves);
         addIfValid(board, pos, new ChessPosition(r - 2, c + 1), moves);
@@ -131,11 +113,9 @@ public class ChessPiece {
     private void addSlideMoves(ChessBoard board, ChessPosition start, int row, int col, List<ChessMove> moves) {
         int r = start.getRow() + row;
         int c = start.getColumn() + col;
-
         while (r >= 1 && r <= 8 && c >= 1 && c <= 8) {
             ChessPosition end = new ChessPosition(r, c);
             ChessPiece target = board.getPiece(end);
-
             if (target == null) {
                 moves.add(new ChessMove(start, end));
             } else {
@@ -156,15 +136,12 @@ public class ChessPiece {
         int direction = isWhite ? 1 : -1;
         int startRow = isWhite ? 2 : 7;
         int promotionRow = isWhite ? 7 : 2;
-
         ChessPosition oneForward = new ChessPosition(r + direction, c);
         if (isValidPosition(oneForward) && board.getPiece(oneForward) == null) {
             if (r == promotionRow) {
                 addPromotionMoves(pos, oneForward, moves);
             } else {
                 moves.add(new ChessMove(pos, oneForward));
-
-                // Double step from starting position
                 if (r == startRow) {
                     ChessPosition twoForward = new ChessPosition(r + 2 * direction, c);
                     if (isValidPosition(twoForward) && board.getPiece(twoForward) == null) {
@@ -173,14 +150,15 @@ public class ChessPiece {
                 }
             }
         }
-
         int[] captureCols = {c - 1, c + 1};
         for (int capCol : captureCols) {
-            if (capCol < 1 || capCol > 8) continue;
-
+            if (capCol < 1 || capCol > 8) {
+                continue;
+            }
             ChessPosition capturePos = new ChessPosition(r + direction, capCol);
-            if (!isValidPosition(capturePos)) continue;
-
+            if (!isValidPosition(capturePos)) {
+                continue;
+            }
             ChessPiece target = board.getPiece(capturePos);
             if (target != null && target.getTeamColor() != pieceColor) {
                 if (r == promotionRow) {
