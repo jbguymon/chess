@@ -1,6 +1,6 @@
 package service;
 
-import dataaccess.dataaccess;
+import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess; // Your in-memory DAO implementation
 import model.AuthData;
 import model.GameData;
@@ -15,7 +15,7 @@ import java.util.List;
 public class JUNITTests {
 
     private GameService gameService;
-    private dataaccess data;
+    private DataAccess data;
     private String authToken;
 
     @BeforeEach
@@ -29,7 +29,7 @@ public class JUNITTests {
     }
 
     @Test
-    void createGame_success() throws Exception {
+    void createGameSuccess() throws Exception {
         CreateGameRequest request = new CreateGameRequest("Test Game");
         CreateGameResponse response = gameService.createGame(authToken, request);
         assertNotNull(response);
@@ -41,14 +41,14 @@ public class JUNITTests {
     }
 
     @Test
-    void createGame_unauthorized() {
+    void createGameUnauthorized() {
         CreateGameRequest request = new CreateGameRequest("Test Game");
         Exception exception = assertThrows(Exception.class, () -> gameService.createGame("bad-token", request));
         assertEquals("unauthorized", exception.getMessage());
     }
 
     @Test
-    void listGames_success() throws Exception {
+    void listGamesSuccess() throws Exception {
         int id = data.createGame("Game 1");
         ListGamesResponse response = gameService.listGames(authToken);
         assertNotNull(response);
@@ -58,13 +58,13 @@ public class JUNITTests {
     }
 
     @Test
-    void listGames_unauthorized() {
+    void listGamesUnauthorized() {
         Exception exception = assertThrows(Exception.class, () -> gameService.listGames("bad-token"));
         assertEquals("unauthorized", exception.getMessage());
     }
 
     @Test
-    void joinGame_successWhite() throws Exception {
+    void joinGameSuccessWhite() throws Exception {
         int gameId = data.createGame("Join Test");
         JoinGameRequest request = new JoinGameRequest("WHITE", gameId);
         gameService.joinGame(authToken, request);
@@ -74,7 +74,7 @@ public class JUNITTests {
     }
 
     @Test
-    void joinGame_successBlack() throws Exception {
+    void joinGameSuccessBlack() throws Exception {
         int gameId = data.createGame("Join Test 2");
         data.updateGame(new GameData(gameId, "bob", null, "Join Test 2", null));
         JoinGameRequest request = new JoinGameRequest("BLACK", gameId);
@@ -85,7 +85,7 @@ public class JUNITTests {
     }
 
     @Test
-    void joinGame_alreadyTaken() throws Exception {
+    void joinGameAlreadyTaken() throws Exception {
         int gameId = data.createGame("Taken Test");
         data.updateGame(new GameData(gameId, "bob", null, "Taken Test", null));
         JoinGameRequest request = new JoinGameRequest("WHITE", gameId);
@@ -94,7 +94,7 @@ public class JUNITTests {
     }
 
     @Test
-    void joinGame_badRequest_invalidColor() throws Exception {
+    void joinGameBadRequestInvalidColor() throws Exception {
         int gameId = data.createGame("Bad Color Test");
         JoinGameRequest request = new JoinGameRequest("GREEN", gameId);
         Exception exception = assertThrows(Exception.class, () -> gameService.joinGame(authToken, request));
@@ -102,7 +102,7 @@ public class JUNITTests {
     }
 
     @Test
-    void joinGame_unauthorized() throws Exception {
+    void joinGameUnauthorized() throws Exception {
         int gameId = data.createGame("Unauthorized Test");
         JoinGameRequest request = new JoinGameRequest("WHITE", gameId);
         Exception exception = assertThrows(Exception.class, () -> gameService.joinGame("bad-token", request));

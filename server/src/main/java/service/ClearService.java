@@ -1,9 +1,9 @@
 package service;
-import dataaccess.dataaccess;
+import dataaccess.DataAccess;
 
 public class ClearService {
-    private final dataaccess data;
-    public ClearService(dataaccess data){
+    private final DataAccess data;
+    public ClearService(DataAccess data){
         this.data = data;
     }
 

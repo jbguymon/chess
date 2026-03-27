@@ -2,7 +2,7 @@ package dataaccess;
 import model.*;
 import java.util.*;
 
-public class MemoryDataAccess implements dataaccess {
+public class MemoryDataAccess implements DataAccess {
     private final Map<String, UserData> users = new HashMap<>();
     private final Map<String, AuthData> authTokens = new HashMap<>();
     private final Map<Integer, GameData> games = new HashMap<>();

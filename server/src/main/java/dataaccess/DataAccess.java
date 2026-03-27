@@ -2,10 +2,9 @@ package dataaccess;
 
 import model.*;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
-public interface dataaccess {
+public interface DataAccess {
 
     void clear() throws DataAccessException;
     void createUser(UserData user) throws DataAccessException;

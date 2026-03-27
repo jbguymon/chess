@@ -1,13 +1,13 @@
 package service;
-import dataaccess.dataaccess;
+import dataaccess.DataAccess;
 import model.UserData;
 import model.AuthData;
 import java.util.UUID;
 
 public class UserService {
-    private final dataaccess data;
+    private final DataAccess data;
 
-    public UserService(dataaccess data){
+    public UserService(DataAccess data){
         this.data = data;
     }
 
