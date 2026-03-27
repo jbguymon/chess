@@ -38,17 +38,20 @@ public class GameService {
             throw new Exception("bad request");
         }
         String username = data.getAuth(authToken).username();
-        if(request.color().equals("WHITE")){
+        if(request.playerColor() == null){
+            throw new Exception("bad request");
+        }
+        if(request.playerColor().equals("WHITE")){
             if(game.whiteUsername() != null){
                 throw new Exception("already taken");
             }
             game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
         }
-        else if(request.color().equals("BLACK")){
+        else if(request.playerColor().equals("BLACK")){
             if(game.blackUsername() != null){
                 throw new Exception("already taken");
             }
-            game = new GameData(game.gameID(), username, game.whiteUsername(), game.gameName(), game.game());
+            game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
         }
         else{
             throw new Exception("bad request");
