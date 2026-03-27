@@ -19,15 +19,7 @@ public class GameHandler {
             context.status(200);
             context.result(gson.toJson(response));
         } catch (Exception exception){
-            String message = exception.getMessage();
-            int errorStatus = switch (message){
-                case "bad request" -> 400;
-                case "unauthorized" -> 401;
-                case "already taken" -> 403;
-                default -> 500;
-            };
-            context.status(errorStatus);
-            context.result("{\"message\":\"Error: " + message + "\"}");
+            exceptionHandler(context, exception);
         }
     }
 
@@ -38,15 +30,7 @@ public class GameHandler {
             context.status(200);
             context.result(gson.toJson(response));
         } catch (Exception exception){
-            String message = exception.getMessage();
-            int errorStatus = switch (message){
-                case "bad request" -> 400;
-                case "unauthorized" -> 401;
-                case "already taken" -> 403;
-                default -> 500;
-            };
-            context.status(errorStatus);
-            context.result("{\"message\":\"Error: " + message + "\"}");
+            exceptionHandler(context, exception);
         }
     }
 
@@ -58,15 +42,19 @@ public class GameHandler {
             context.status(200);
             context.result("{}");
         } catch (Exception exception){
-            String message = exception.getMessage();
-            int errorStatus = switch (message){
-                case "bad request" -> 400;
-                case "unauthorized" -> 401;
-                case "already taken" -> 403;
-                default -> 500;
-            };
-            context.status(errorStatus);
-            context.result("{\"message\":\"Error: " + message + "\"}");
+            exceptionHandler(context, exception);
         }
+    }
+
+    private void exceptionHandler(Context context, Exception exception){
+        String message = exception.getMessage();
+        int errorStatus = switch (message){
+            case "bad request" -> 400;
+            case "unauthorized" -> 401;
+            case "already taken" -> 403;
+            default -> 500;
+        };
+        context.status(errorStatus);
+        context.result("{\"message\":\"Error: " + message + "\"}");
     }
 }
