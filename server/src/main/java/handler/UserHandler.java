@@ -1,8 +1,6 @@
 package handler;
 import org.eclipse.jetty.server.Authentication;
-import service.UserService;
-import service.RegisterRequest;
-import service.RegisterResult;
+import service.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
 
@@ -20,15 +18,51 @@ public class UserHandler {
             RegisterRequest request = gson.fromJson(context.body(), RegisterRequest.class);
             RegisterResult result = service.register(request);
             context.status(200);
-            context.json(result);
+            context.result(gson.toJson(result));
         } catch (Exception exception){
             String message = exception.getMessage() != null ? exception.getMessage() : "unknown error";
             int errorStatus = switch (message) {
-                case "Username already taken" -> 403;
-                case "Bad request" -> 400;
+                case "already taken" -> 403;
+                case "bad request" -> 400;
                 default -> 500;
             };
-            context.json("{\"message\":\"Error: " + message + "\"}");
+            context.status(errorStatus);
+            context.result("{\"message\":\"Error: " + message + "\"}");
+        }
+    }
+
+    public void login(Context context){
+        try{
+            LoginReq request = gson.fromJson(context.body(), LoginReq.class);
+            LoginResult result = service.login(request);
+            context.status(200);
+            context.result(gson.toJson(result));
+        } catch (Exception exception){
+            String message = exception.getMessage();
+            int errorStatus = switch (message){
+                case "bad request" -> 400;
+                case "unauthorized" -> 401;
+                default -> 500;
+            };
+            context.status(errorStatus);
+            context.result("{\"message\":\"Error: " + message + "\"}");
+        }
+    }
+
+    public void logout(Context context){
+        try{
+            String authToken = context.header("authorization");
+            service.logout(authToken);
+            context.status(200);
+            context.result("{}");
+        } catch(Exception exception){
+            String message = exception.getMessage();
+            int errorStatus = switch(message){
+                case "unauthorized" -> 401;
+                default -> 500;
+            };
+            context.status(errorStatus);
+            context.result("{\"message\":\"Error: " + message + "\"}");
         }
     }
 }

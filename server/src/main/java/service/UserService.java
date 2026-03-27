@@ -13,14 +13,38 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest request) throws Exception{
         if(request.username() == null || request.password() == null){
-            throw new Exception("Bad request");
+            throw new Exception("bad request");
         }
         if(data.getUser(request.username()) != null){
-            throw new Exception("Username already taken");
+            throw new Exception("already taken");
         }
         data.createUser(new UserData(request.username(), request.password(), request.email()));
         String token = UUID.randomUUID().toString();
         data.createAuth(new AuthData(token, request.username()));
         return new RegisterResult(request.username(), token);
+    }
+
+    public LoginResult login(LoginReq request) throws Exception {
+        if(request.username() == null || request.password() == null){
+            throw new Exception("bad request");
+        }
+        UserData user = data.getUser(request.username());
+        if(user == null || !user.password().equals(request.password())){
+            throw new Exception("unauthorized");
+        }
+        String token = UUID.randomUUID().toString();
+        data.createAuth(new AuthData(token, request.username()));
+        return new LoginResult(request.username(), token);
+    }
+
+    public void logout(String authToken) throws Exception {
+        if (authToken == null) {
+            throw new Exception("unauthorized");
+        }
+        var authorToken = data.getAuth(authToken);
+        if(authorToken == null){
+            throw new Exception("unauthorized");
+        }
+        data.deleteAuth(authToken);
     }
 }
