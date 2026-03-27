@@ -131,10 +131,11 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         for(int i = 1; i < 9; i++){
             for(int j = 1; j < 9; j++){
-                if(board.getPiece(new ChessPosition(i,j)) == null){
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+                if(piece == null){
                     continue;
                 }
-                if(board.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor){
+                if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor){
                     return isSpaceAttacked(new ChessPosition(i, j), teamColor);
                 }
             }
@@ -271,8 +272,12 @@ public class ChessGame {
                 break;
             }
             ChessPiece piece = board.getPiece(new ChessPosition(newRow, newCol));
-            if(piece == null) continue;
-            if(piece.getTeamColor() == color) break;
+            if(piece == null) {
+                continue;
+            }
+            if(piece.getTeamColor() == color) {
+                break;
+            }
             for(ChessPiece.PieceType type : validTypes) {
                 if(piece.getPieceType() == type){
                     return true;
