@@ -6,6 +6,8 @@ import service.ClearService;
 import handler.ClearHandler;
 import service.UserService;
 import handler.UserHandler;
+import service.GameService;
+import handler.GameHandler;
 
 public class Server {
 
@@ -27,6 +29,13 @@ public class Server {
         javalin.post("/user", userHandler::register);
         javalin.post("/session", userHandler::login);
         javalin.delete("/session", userHandler::logout);
+
+        var gameService = new GameService(data);
+        var gameHandler = new GameHandler(gameService);
+
+        javalin.get("/game", gameHandler::listGames);
+        javalin.post("/game", gameHandler::createGame);
+        javalin.put("/game", gameHandler::joinGame);
     }
 
     public int run(int desiredPort) {
