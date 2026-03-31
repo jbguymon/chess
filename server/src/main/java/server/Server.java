@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.DatabaseManager;
 import io.javalin.*;
 import dataaccess.MemoryDataAccess;
 import service.ClearService;
