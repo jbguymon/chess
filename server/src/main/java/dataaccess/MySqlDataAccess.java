@@ -13,11 +13,36 @@ public class MySqlDataAccess implements DataAccess {
     //User functions
 
     public void createUser(UserData user) throws DataAccessException {
-
+        String sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        try (var conn = DatabaseManager.getConnection();
+            var state = conn.prepareStatement(sql)){
+            String hash = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+            state.setString(1, user.username());
+            state.setString(2, hash);
+            state.setString(3, user.email());
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error creating user", exception);
+        }
     }
 
     public UserData getUser(String username) throws DataAccessException {
-
+        String sql = "SELECT username, password, email FROM user WHERE username=?";
+        try(var conn = DatabaseManager.getConnection();
+        var state = conn.prepareStatement(sql)) {
+            state.setString(1, username);
+            var resultSet = state.executeQuery();
+            if(resultSet.next()){
+                return new UserData(
+                    resultSet.getString("username"),
+                    resultSet.getString("password"),
+                    resultSet.getString("email"));
+            }
+            return null;
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error getting user", exception);
+        }
     }
 
     //Auth token functions
