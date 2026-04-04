@@ -73,5 +73,14 @@ public class DatabaseManager {
         var host = props.getProperty("db.host");
         var port = Integer.parseInt(props.getProperty("db.port"));
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
+        // === DEBUG PRINTS - ADD THESE LINES ===
+        System.out.println("=== DatabaseManager Debug ===");
+        System.out.println("Host: " + host);
+        System.out.println("Port: " + port);
+        System.out.println("Database Name: " + databaseName);
+        System.out.println("Username: " + dbUsername);
+        System.out.println("Password length: " + (dbPassword == null ? "null" : dbPassword.length()));
+        System.out.println("Connection URL: " + connectionUrl);
+        System.out.println("=============================");
     }
 }

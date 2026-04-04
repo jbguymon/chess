@@ -10,6 +10,8 @@ import handler.UserHandler;
 import service.GameService;
 import handler.GameHandler;
 import dataaccess.MySqlDataAccess;
+import dataaccess.DatabaseInitializer;
+import dataaccess.DataAccessException;
 
 public class Server {
 
@@ -41,6 +43,11 @@ public class Server {
     }
 
     public int run(int desiredPort) {
+        try {
+            DatabaseInitializer.initialize();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to initialize database", e);
+        }
         javalin.start(desiredPort);
         return javalin.port();
     }
