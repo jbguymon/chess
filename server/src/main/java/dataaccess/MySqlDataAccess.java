@@ -1,6 +1,8 @@
 package dataaccess;
 import java.sql.*;
 import java.util.*;
+
+import chess.ChessGame;
 import model.*;
 import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
@@ -91,23 +93,93 @@ public class MySqlDataAccess implements DataAccess {
 
     //Game functions
 
-    public int createGame(String name) throws DataAccessException {
-
+    public int createGame(String gameName) throws DataAccessException {
+        String sql = "INSERT INTO game (gameName, gameState VALUES (?, ?)";
+        String gameNameJson = gson.toJson(null);
+        try(var conn = DatabaseManager.getConnection();
+        var state = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            state.setString(1, gameName);
+            state.setString(2, gameNameJson);
+            state.executeUpdate();
+            var resultSet = state.getGeneratedKeys();
+            if(resultSet.next()){
+                return resultSet.getInt(1);
+            }
+            throw new DataAccessException("Failed to get game ID", null);
+        }
+        catch (Exception exception) {
+            throw new DataAccessException("Error creating game", exception);
+        }
     }
 
     public GameData getGame(int gameID) throws DataAccessException {
-
+        String sql = "SELECT * FROM game WHERE gameID=?";
+        try(var conn = DatabaseManager.getConnection();
+        var state = conn.prepareStatement(sql)) {
+            state.setInt(1, gameID);
+            var resultSet = state.executeQuery();
+            if(resultSet.next()) {
+                return new GameData(
+                    resultSet.getInt("gameID"),
+                    resultSet.getString("whiteUsername"),
+                    resultSet.getString("blackUsername"),
+                    resultSet.getString("gameName"),
+                    gson.fromJson(resultSet.getString("gameState"), ChessGame.class)
+                );
+            }
+            return null;
+        }
+        catch (Exception exception) {
+            throw new DataAccessException("Error getting game", exception);
+        }
     }
 
     public List<GameData> listGames() throws DataAccessException {
-
+        String sql = "SELECT * FROM game";
+        List<GameData> gameList = new ArrayList<>();
+        try(var conn = DatabaseManager.getConnection();
+            var state = conn.prepareStatement(sql)) {
+            var resultSet = state.executeQuery();
+            while(resultSet.next()){
+                gameList.add(new GameData(
+                   resultSet.getInt("gameID"),
+                   resultSet.getString("whiteUsername"),
+                   resultSet.getString("blackUsername"),
+                   resultSet.getString("gameName"),
+                   gson.fromJson(resultSet.getString("gameState"), ChessGame.class)
+                ));
+            }
+            return gameList;
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error listing games", exception);
+        }
     }
 
     public void updateGame(GameData game) throws DataAccessException {
-
+        String sql = "UPDATE game SET whiteUsername=?, blackUsername=?, gameState=? WHERE gameID=?";
+        try (var conn = DatabaseManager.getConnection();
+             var state = conn.prepareStatement(sql)) {
+            state.setString(1, game.whiteUsername());
+            state.setString(2, game.blackUsername());
+            state.setString(3, gson.toJson(game.game()));
+            state.setInt(4, game.gameID());
+            state.executeUpdate();
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error updating game", exception);
+        }
     }
 
     public void clear() throws DataAccessException{
-
+        try (var conn = DatabaseManager.getConnection();
+             var state = conn.createStatement()) {
+            state.executeUpdate("DELETE FROM auth");
+            state.executeUpdate("DELETE FROM game");
+            state.executeUpdate("DELETE FROM user");
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error clearing database", exception);
+        }
     }
 }
