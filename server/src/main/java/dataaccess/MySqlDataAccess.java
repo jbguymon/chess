@@ -48,15 +48,45 @@ public class MySqlDataAccess implements DataAccess {
     //Auth token functions
 
     public void createAuth(AuthData auth) throws DataAccessException {
-
+        String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        try(var conn = DatabaseManager.getConnection();
+        var state = conn.prepareStatement(sql)) {
+            state.setString(1, auth.authToken());
+            state.setString(2, auth.username());
+            state.executeUpdate();
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error creating auth", exception);
+        }
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
-
+        String sql = "SELECT authToken, username FROM auth WHERE authToken=?";
+        try(var conn = DatabaseManager.getConnection();
+        var state = conn.prepareStatement(sql)){
+            var resultSet = state.executeQuery();
+            state.setString(1, authToken);
+            if(resultSet.next()){
+                return new AuthData(resultSet.getString("authToken"),
+                        resultSet.getString("username"));
+            }
+            return null;
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error getting auth", exception);
+        }
     }
 
-    public void deleteAuth(String token) throws DataAccessException {
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        String sql = "DELETE FROM auth WHERE authToken=?";
+        try(var conn = DatabaseManager.getConnection();
+        var state = conn.prepareStatement(sql)){
+            state.setString(1, authToken);
+            state.executeUpdate();
+        }
+        catch (Exception exception){
+            throw new DataAccessException("Error deleting auth", exception);
+        }
     }
 
     //Game functions
