@@ -27,7 +27,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void createUserNegative_duplicate() throws DataAccessException {
+    void createUserNegativeDuplicate() throws DataAccessException {
         UserData user = new UserData("joe", "password", "joe@joe.com");
         data.createUser(user);
         assertThrows(DataAccessException.class, () -> data.createUser(user));
@@ -42,7 +42,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void getUserNegative_notFound() throws DataAccessException {
+    void getUserNegativeNotFound() throws DataAccessException {
         UserData user = data.getUser("random");
         assertNull(user);
     }
@@ -60,7 +60,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void createAuthNegative_invalidUser() {
+    void createAuthNegativeInvalidUser() {
         AuthData auth = new AuthData("badToken", "random");
         assertThrows(DataAccessException.class, () -> data.createAuth(auth));
     }
@@ -74,7 +74,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void getAuthNegative_notFound() throws DataAccessException {
+    void getAuthNegativeNotFound() throws DataAccessException {
         assertNull(data.getAuth("fake"));
     }
 
@@ -87,7 +87,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void deleteAuthNegative_noError() {
+    void deleteAuthNegativeNoError() {
         assertDoesNotThrow(() -> data.deleteAuth("fake"));
     }
 
@@ -102,7 +102,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void createGameNegative_nullName() {
+    void createGameNegativeNullName() {
         assertThrows(DataAccessException.class, () -> data.createGame(null));
     }
 
@@ -114,7 +114,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void getGameNegative_notFound() throws DataAccessException {
+    void getGameNegativeNotFound() throws DataAccessException {
         assertNull(data.getGame(2));
     }
 
@@ -127,7 +127,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void listGamesNegative_empty() throws DataAccessException {
+    void listGamesNegativeEmpty() throws DataAccessException {
         List<GameData> games = data.listGames();
         assertTrue(games.isEmpty());
     }
@@ -148,7 +148,7 @@ public class SqlDataAccessTest {
     }
 
     @Test
-    void updateGameNegative_invalidID() {
+    void updateGameNegativeInvalidID() {
         GameData fake = new GameData(999, "w", "b", "fake", new ChessGame());
         assertDoesNotThrow(() -> data.updateGame(fake));
     }
