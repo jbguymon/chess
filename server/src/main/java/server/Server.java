@@ -9,6 +9,7 @@ import service.UserService;
 import handler.UserHandler;
 import service.GameService;
 import handler.GameHandler;
+import dataaccess.MySqlDataAccess;
 
 public class Server {
 
@@ -18,7 +19,7 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        var data = new MemoryDataAccess();
+        var data = new MySqlDataAccess();
         var clearService = new ClearService(data);
         var clearHandler = new ClearHandler(clearService);
 

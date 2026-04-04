@@ -2,6 +2,8 @@ package service;
 import dataaccess.DataAccess;
 import model.UserData;
 import model.AuthData;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.UUID;
 
 public class UserService {
@@ -29,7 +31,7 @@ public class UserService {
             throw new Exception("bad request");
         }
         UserData user = data.getUser(request.username());
-        if(user == null || !user.password().equals(request.password())){
+        if(user == null || !BCrypt.checkpw(request.password(), user.password())) {
             throw new Exception("unauthorized");
         }
         String token = UUID.randomUUID().toString();

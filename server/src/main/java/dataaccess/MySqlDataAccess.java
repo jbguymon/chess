@@ -7,8 +7,6 @@ import model.*;
 import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
-
 public class MySqlDataAccess implements DataAccess {
     private final Gson gson = new Gson();
 
@@ -22,6 +20,7 @@ public class MySqlDataAccess implements DataAccess {
             state.setString(1, user.username());
             state.setString(2, hash);
             state.setString(3, user.email());
+            state.executeUpdate();
         }
         catch (Exception exception){
             throw new DataAccessException("Error creating user", exception);
@@ -66,8 +65,8 @@ public class MySqlDataAccess implements DataAccess {
         String sql = "SELECT authToken, username FROM auth WHERE authToken=?";
         try(var conn = DatabaseManager.getConnection();
         var state = conn.prepareStatement(sql)){
-            var resultSet = state.executeQuery();
             state.setString(1, authToken);
+            var resultSet = state.executeQuery();
             if(resultSet.next()){
                 return new AuthData(resultSet.getString("authToken"),
                         resultSet.getString("username"));
@@ -94,12 +93,12 @@ public class MySqlDataAccess implements DataAccess {
     //Game functions
 
     public int createGame(String gameName) throws DataAccessException {
-        String sql = "INSERT INTO game (gameName, gameState VALUES (?, ?)";
-        String gameNameJson = gson.toJson(null);
+        String sql = "INSERT INTO game (gameName, gameState) VALUES (?, ?)";
+        String gameStateJson = gson.toJson(new ChessGame());
         try(var conn = DatabaseManager.getConnection();
         var state = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             state.setString(1, gameName);
-            state.setString(2, gameNameJson);
+            state.setString(2, gameStateJson);
             state.executeUpdate();
             var resultSet = state.getGeneratedKeys();
             if(resultSet.next()){
