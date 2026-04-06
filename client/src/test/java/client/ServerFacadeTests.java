@@ -30,6 +30,12 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    @BeforeEach
+    void setup() throws ResponseException{
+        facade = new ServerFacade("http://localhost:" + port);
+        clearData();
+    }
+
     private void clearData(){
         try{
             var client = HttpClient.newHttpClient();

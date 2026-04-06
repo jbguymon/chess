@@ -25,7 +25,7 @@ public class ServerFacade {
 
     public AuthData register(String username, String password, String email) throws ResponseException{
         var body = new RegisterRequest(username, password, email);
-        var request = buildRequest("POST", "/register", body, null);
+        var request = buildRequest("POST", "/user", body, null);
         var response = sendRequest(request);
         AuthData authData = handleResponse(response, AuthData.class);
         assert authData != null;
@@ -35,7 +35,7 @@ public class ServerFacade {
 
     public AuthData login(String username, String password) throws ResponseException{
         var body = new LoginReq(username, password);
-        var request = buildRequest("POST", "/login", body, null);
+        var request = buildRequest("POST", "/session", body, null);
         var response = sendRequest(request);
         AuthData authData = handleResponse(response, AuthData.class);
         assert authData != null;
@@ -44,7 +44,7 @@ public class ServerFacade {
     }
 
     public void logout(String authToken) throws ResponseException{
-        var request = buildRequest("POST", "/logout", null, authToken);
+        var request = buildRequest("POST", "/session", null, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
         this.authToken = null;
@@ -61,7 +61,7 @@ public class ServerFacade {
     }
 
     public List<GameData> listGames(String authToken) throws ResponseException{
-        var request = buildRequest("GET", "/game/list", null, authToken);
+        var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
         ListGamesResponse listResponse = handleResponse(response, ListGamesResponse.class);
         assert listResponse != null;
@@ -101,7 +101,7 @@ public class ServerFacade {
             request.setHeader("Content-Type", "application/json");
         }
         if(authToken != null){
-            request.setHeader("Authorization", "Bearer " + authToken);
+            request.setHeader("Authorization", authToken);
         }
         return request.build();
     }
