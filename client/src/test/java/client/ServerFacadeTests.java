@@ -73,5 +73,18 @@ public class ServerFacadeTests {
                 facade.login("loginuserbad", "notbadloginpass"));
     }
 
+    //logout tests
+    @Test
+    void logoutPositive() throws ResponseException{
+        AuthData auth = facade.register("logoutuser", "logoutpass", "logout@pos.com");
+        assertNotNull(auth.authToken());
+        assertDoesNotThrow(() -> facade.logout(auth.authToken()));
+    }
 
+    @Test
+    void logoutNegative() {
+        assertThrows(ResponseException.class, () -> facade.logout("badtoken"));
+    }
+
+    //create game tests
 }
