@@ -44,7 +44,7 @@ public class ServerFacade {
     }
 
     public void logout(String authToken) throws ResponseException{
-        var request = buildRequest("POST", "/session", null, authToken);
+        var request = buildRequest("DELETE", "/session", null, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
         this.authToken = null;
@@ -64,7 +64,9 @@ public class ServerFacade {
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
         ListGamesResponse listResponse = handleResponse(response, ListGamesResponse.class);
-        assert listResponse != null;
+        if(listResponse == null || listResponse.games() == null){
+            throw new ResponseException(ResponseException.Code.ServerError, "Invalid response from server");
+        }
         gameList = listResponse.games();
         return gameList;
     }
@@ -85,12 +87,6 @@ public class ServerFacade {
         if(gameList == null || gameNumber < 1 || gameNumber > gameList.size()){
             throw new ResponseException(ResponseException.Code.ClientError, "invalid game number");
         }
-        GameData game = gameList.get(gameNumber - 1);
-        int gameID = game.gameID();
-        var body = new JoinGameRequest(null, gameID);
-        var request = buildRequest("PUT", "/game", body, authToken);
-        var response = sendRequest(request);
-        handleResponse(response, null);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
@@ -127,14 +123,24 @@ public class ServerFacade {
         if (!isSuccessful(status)){
             var body = response.body();
             if (body != null){
-                throw ResponseException.fromJson(body);
+                try{
+                    throw ResponseException.fromJson(body);
+                }
+                catch (Exception exception){
+                    throw new ResponseException(ResponseException.Code.ServerError, "Server error:" + body);
+                }
             }
 
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
 
         if (responseClass != null){
-            return new Gson().fromJson(response.body(), responseClass);
+            try {
+                return new Gson().fromJson(response.body(), responseClass);
+            }
+            catch (Exception exception) {
+                throw new ResponseException(ResponseException.Code.ServerError, "Invalid JSON response" + response.body());
+            }
         }
 
         return null;
