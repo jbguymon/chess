@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 
 public class ServerFacadeTests {
@@ -99,5 +100,20 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> facade.createGame("noauthgame"));
     }
 
+    //list game tests
+    @Test
+    void listGamesPositive() throws ResponseException{
+        AuthData auth = facade.register("listgameuser", "listgamepass", "list@game.com");
+        facade.createGame("game1");
+        facade.createGame("game2");
+        List<GameData> games = facade.listGames(auth.authToken());
+        assertEquals(2, games.size());
+    }
+
+    void listGamesNegative() throws ResponseException{
+        assertThrows(ResponseException.class, () -> facade.listGames("badToken"));
+    }
+
+    //join game tests
 
 }
