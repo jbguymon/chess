@@ -85,12 +85,12 @@ public class ServerFacadeTests {
     void logoutPositive() throws ResponseException{
         AuthData auth = facade.register("logoutuser", "logoutpass", "logout@pos.com");
         assertNotNull(auth.authToken());
-        assertDoesNotThrow(() -> facade.logout(auth.authToken()));
+        assertDoesNotThrow(() -> facade.logout());
     }
 
     @Test
     void logoutNegative(){
-        assertThrows(ResponseException.class, () -> facade.logout("badtoken"));
+        assertThrows(ResponseException.class, () -> facade.logout());
     }
 
     //create game tests
@@ -112,13 +112,13 @@ public class ServerFacadeTests {
         AuthData auth = facade.register("listgameuser", "listgamepass", "list@game.com");
         facade.createGame("game1");
         facade.createGame("game2");
-        List<GameData> games = facade.listGames(auth.authToken());
+        List<GameData> games = facade.listGames();
         assertEquals(2, games.size());
     }
 
     @Test
     void listGamesNegative() throws ResponseException{
-        assertThrows(ResponseException.class, () -> facade.listGames("badToken"));
+        assertThrows(ResponseException.class, () -> facade.listGames());
     }
 
     //join game tests
@@ -126,7 +126,7 @@ public class ServerFacadeTests {
     void joinGamePositive() throws ResponseException{
         AuthData auth = facade.register("joingameuser", "joingamepass", "join@game.com");
         facade.createGame("game1");
-        facade.listGames(auth.authToken());
+        facade.listGames();
         assertDoesNotThrow(() -> facade.joinGame(1, "WHITE"));
     }
 
@@ -134,7 +134,7 @@ public class ServerFacadeTests {
     void joinGameNegative() throws ResponseException{
         AuthData auth = facade.register("joingameuserbad", "joingamepassbad", "join@game.com");
         facade.createGame("game1");
-        facade.listGames(auth.authToken());
+        facade.listGames();
         assertThrows(ResponseException.class, () -> facade.joinGame(2, "WHITE"));
     }
 
@@ -143,7 +143,7 @@ public class ServerFacadeTests {
     void observeGamePositive() throws ResponseException{
         AuthData auth = facade.register("observegame", "observegamepass", "observe@game.com");
         facade.createGame("observetest");
-        facade.listGames(auth.authToken());
+        facade.listGames();
         facade.observeGame(1);
     }
 
@@ -151,7 +151,7 @@ public class ServerFacadeTests {
     void observeGameNegative() throws ResponseException{
         AuthData auth = facade.register("observebad", "observebadpass", "observer@bad.com");
         facade.createGame("game1");
-        facade.listGames(auth.authToken());
+        facade.listGames();
         assertThrows(ResponseException.class, () -> facade.observeGame(3));
     }
 }

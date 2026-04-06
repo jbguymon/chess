@@ -43,7 +43,8 @@ public class ServerFacade {
         return authData;
     }
 
-    public void logout(String authToken) throws ResponseException{
+    public void logout() throws ResponseException{
+        assert authToken != null;
         var request = buildRequest("DELETE", "/session", null, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
@@ -60,7 +61,8 @@ public class ServerFacade {
         return gameData.gameID();
     }
 
-    public List<GameData> listGames(String authToken) throws ResponseException{
+    public List<GameData> listGames() throws ResponseException{
+        assert authToken != null;
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
         ListGamesResponse listResponse = handleResponse(response, ListGamesResponse.class);
