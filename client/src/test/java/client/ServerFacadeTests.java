@@ -124,6 +124,7 @@ public class ServerFacadeTests {
         assertDoesNotThrow(() -> facade.joinGame(1, "WHITE"));
     }
 
+    @Test
     void joinGameNegative() throws ResponseException{
         AuthData auth = facade.register("joingameuserbad", "joingamepassbad", "join@game.com");
         facade.createGame("game1");
@@ -131,5 +132,20 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> facade.joinGame(2, "WHITE"));
     }
 
+    //observe games
+    @Test
+    void observeGamePositive() throws ResponseException{
+        AuthData auth = facade.register("observegame", "observegamepass", "observe@game.com");
+        facade.createGame("observetest");
+        facade.listGames(auth.authToken());
+        facade.observeGame(1);
+    }
 
+    @Test
+    void observeGameNegative() throws ResponseException{
+        AuthData auth = facade.register("observebad", "observebadpass", "observer@bad.com");
+        facade.createGame("game1");
+        facade.listGames(auth.authToken());
+        assertThrows(ResponseException.class, () -> facade.observeGame(3));
+    }
 }
