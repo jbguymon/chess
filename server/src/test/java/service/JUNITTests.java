@@ -2,9 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess; // Your in-memory DAO implementation
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

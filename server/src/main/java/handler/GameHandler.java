@@ -1,6 +1,10 @@
 package handler;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
+import model.CreateGameRequest;
+import model.CreateGameResponse;
+import model.JoinGameRequest;
+import model.ListGamesResponse;
 import service.*;
 
 public class GameHandler {

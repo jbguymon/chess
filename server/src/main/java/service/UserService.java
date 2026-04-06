@@ -1,7 +1,6 @@
 package service;
 import dataaccess.DataAccess;
-import model.UserData;
-import model.AuthData;
+import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;

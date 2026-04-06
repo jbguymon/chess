@@ -1,5 +1,8 @@
 package handler;
-import org.eclipse.jetty.server.Authentication;
+import model.LoginReq;
+import model.LoginResult;
+import model.RegisterRequest;
+import model.RegisterResult;
 import service.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
