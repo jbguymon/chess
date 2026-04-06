@@ -82,9 +82,22 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void logoutNegative() {
+    void logoutNegative(){
         assertThrows(ResponseException.class, () -> facade.logout("badtoken"));
     }
 
     //create game tests
+    @Test
+    void createGamePositive() throws ResponseException{
+        facade.register("creategameuser", "creategamepass", "create@game.com");
+        int gameID = facade.createGame("testgame");
+        assertTrue(gameID > 0);
+    }
+
+    @Test
+    void createGameNegative() throws ResponseException{
+        assertThrows(ResponseException.class, () -> facade.createGame("noauthgame"));
+    }
+
+
 }
