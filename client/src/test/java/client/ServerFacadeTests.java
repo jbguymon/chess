@@ -58,4 +58,20 @@ public class ServerFacadeTests {
                 facade.register("dupe", "password", "dupe@dupe.com"));
     }
 
+    //login tests
+    @Test
+    void loginPositive() throws ResponseException{
+        facade.register("loginuser", "loginpass", "login@login.com");
+        AuthData auth = facade.login("loginuser", "loginpass");
+        assertNotNull(auth.authToken());
+    }
+
+    @Test
+    void loginNegative() throws ResponseException{
+        facade.register("loginuserbad", "loginbadpass", "login@bad.com");
+        assertThrows(ResponseException.class, () ->
+                facade.login("loginuserbad", "notbadloginpass"));
+    }
+
+
 }
