@@ -8,7 +8,6 @@ import java.util.Scanner;
 import java.util.List;
 
 import chess.ChessBoard;
-import chess.ChessGame;
 
 public class ClientUI {
     private final ServerFacade facade;
