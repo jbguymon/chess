@@ -7,23 +7,38 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.List;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+
 public class ClientUI {
     private final ServerFacade facade;
     private boolean isLoggedIn = false;
 
-    public ClientUI(String serverURL){
-        this.facade = new ServerFacade(serverURL);
+    public ClientUI(int port){
+        this.facade = new ServerFacade(port);
     }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("> ");
+            System.out.print("> ");
             String input = scanner.nextLine();
             try {
                 handleCommand(input);
             } catch (Exception exception) {
-                System.out.println("Error: " + exception.getMessage());
+                String msg = exception.getMessage();
+                if(msg.contains("unauthorized")){
+                    System.out.println("Invalid username or password.");
+                }
+                else if(msg.contains("already taken")){
+                    System.out.println("Username already exists.");
+                }
+                else if(msg.contains("bad request")){
+                    System.out.println("Invalid input.");
+                }
+                else{
+                    System.out.println("Error: " + msg);
+                }
             }
         }
     }
@@ -101,28 +116,49 @@ public class ClientUI {
                     printGames(games);
                 }
                 else{
-                    System.out.println("Unknown Command. Did you mean list games?");
+                    System.out.println("Unknown Command. Did you mean 'list games'?");
                 }
                 break;
             case "play":
                 if(tokens.length == 4 && tokens[1].equalsIgnoreCase("game")){
+                    facade.listGames();
                     int gameNum = Integer.parseInt(tokens[2]);
                     String color = tokens[3].toUpperCase();
+                    if(!color.equals("WHITE") && !color.equals("BLACK")){
+                        System.out.println("Enter a valid color. Correct usage: play game <number> <WHITE/BLACK>");
+                        return;
+                    }
+                    if(gameNum > facade.listGames().size() || gameNum < 1){
+                        System.out.println("That game doesn't exist. Please use a valid game number.");
+                        return;
+                    }
                     facade.joinGame(gameNum, color);
                     System.out.println("Successfully join game.");
+                    ChessBoard board = new ChessBoard();
+                    board.resetBoard();
+                    boolean isWhite = color.equals("WHITE");
+                    ChessBoardUI.displayBoard(board, isWhite);
                 }
                 else{
-                    System.out.println("Unknown command. Correct usage: play game <number> <WHITE/BLACK");
+                    System.out.println("Unknown command. Did you mean 'play game'?");
                 }
                 break;
             case "observe":
                 if(tokens.length == 3 && tokens[1].equalsIgnoreCase("game")){
+                    facade.listGames();
                     int num = Integer.parseInt(tokens[2]);
+                    if(num > facade.listGames().size() || num < 1){
+                        System.out.println("That game doesn't exist. Please use a valid game number.");
+                        return;
+                    }
                     facade.observeGame(num);
                     System.out.println("Successfully observing game");
+                    ChessBoard board = new ChessBoard();
+                    board.resetBoard();
+                    ChessBoardUI.displayBoard(board, true);
                 }
                 else{
-                    System.out.println("Unknown command. Correct Usage: observe game <number>");
+                    System.out.println("Unknown command. Did you mean 'observe game'?");
                 }
                 break;
             case "quit":

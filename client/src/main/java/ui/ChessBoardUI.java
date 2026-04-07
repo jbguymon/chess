@@ -2,38 +2,40 @@ package ui;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessBoard;
+import chess.ChessPosition;
 
 public class ChessBoardUI {
-    public static void displayBoard(ChessPiece[][] board, boolean isWhite){
+    public static void displayBoard(ChessBoard board, boolean isWhite){
         System.out.print(EscapeSequences.ERASE_SCREEN);
         char[] col = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
-        int startRow = isWhite ? 0 : 7;
-        int endRow = isWhite ? 8 : -1;
-        int stepRow = isWhite ? 1 : -1;
-        int startCol = isWhite ? 0 : 7;
-        int endCol = isWhite ? 8 : -1;
+        int startRow = isWhite ? 8 : 1;
+        int endRow = isWhite ? 0 : 9;
+        int stepRow = isWhite ? -1 : 1;
+        int startCol = isWhite ? 1 : 8;
+        int endCol = isWhite ? 9 : 0;
         int stepCol = isWhite ? 1 : -1;
 
-        System.out.print("   ");
+        System.out.print("  ");
         for(int i = startCol; i != endCol; i += stepCol){
-            System.out.print(" " + col[i] + "  ");
+            System.out.print(" " + col[i - 1] + "\u2003");
         }
         System.out.println();
         for(int j = startRow; j != endRow; j += stepRow){
-            System.out.print((8-j) + " ");
+            System.out.print(j + " ");
             for(int i = startCol; i != endCol; i += stepCol){
-                boolean isWhiteSquare = (i + j) % 2 == 0;
+                boolean isWhiteSquare = (i + j) % 2 == 1;
                 String bgColor = isWhiteSquare ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY : EscapeSequences.SET_BG_COLOR_DARK_GREY;
-                ChessPiece piece = board[j][i];
+                ChessPiece piece = board.getPiece(new ChessPosition(j, i));
                 String pieceSymbol = piece != null ? getPieceSymbol(piece) : EscapeSequences.EMPTY;
                 System.out.print(bgColor + pieceSymbol + EscapeSequences.RESET_BG_COLOR);
             }
-            System.out.println(" " + (8 - j));
+            System.out.println(" " + j);
         }
-        System.out.print("   ");
+        System.out.print("  ");
         for(int i = startCol; i != endCol; i += stepCol){
-            System.out.print(" " + col[i] + "  ");
+            System.out.print(" " + col[i - 1] + "\u2003");
         }
+        System.out.println();
     }
 
     private static String getPieceSymbol(ChessPiece piece){

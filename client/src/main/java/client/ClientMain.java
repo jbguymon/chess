@@ -5,7 +5,8 @@ import ui.ClientUI;
 
 public class ClientMain {
     public static void main(String[] args) {
-        var ui = new ClientUI("http://localhost:8080");
+        int port = 8080;
+        var ui = new ClientUI(port);
         ui.run();
     }
 }

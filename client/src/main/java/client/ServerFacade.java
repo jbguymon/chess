@@ -19,8 +19,8 @@ public class ServerFacade {
     private String authToken;
     private List<GameData> gameList;
 
-    public ServerFacade(String url){
-        serverUrl = url;
+    public ServerFacade(int port){
+        serverUrl = "http://localhost:" + port;
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException{

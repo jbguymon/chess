@@ -32,7 +32,7 @@ public class ServerFacadeTests {
 
     @BeforeEach
     void setup() throws ResponseException{
-        facade = new ServerFacade("http://localhost:" + port);
+        facade = new ServerFacade(port);
         clearData();
     }
 
