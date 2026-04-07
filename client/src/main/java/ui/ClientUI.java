@@ -30,7 +30,12 @@ public class ClientUI {
                     System.out.println("Invalid username or password.");
                 }
                 else if(msg.contains("already taken")){
-                    System.out.println("Username already exists.");
+                    if(!isLoggedIn) {
+                        System.out.println("Username already exists.");
+                    }
+                    else{
+                        System.out.println("Color already taken.");
+                    }
                 }
                 else if(msg.contains("bad request")){
                     System.out.println("Invalid input.");
@@ -121,7 +126,14 @@ public class ClientUI {
             case "play":
                 if(tokens.length == 4 && tokens[1].equalsIgnoreCase("game")){
                     facade.listGames();
-                    int gameNum = Integer.parseInt(tokens[2]);
+                    int gameNum;
+                    try{
+                        gameNum = Integer.parseInt(tokens[2]);
+                    }
+                    catch (NumberFormatException exception){
+                        System.out.println("That is not a number. Please use a valid game number.");
+                        return;
+                    }
                     String color = tokens[3].toUpperCase();
                     if(!color.equals("WHITE") && !color.equals("BLACK")){
                         System.out.println("Enter a valid color. Correct usage: play game <number> <WHITE/BLACK>");
@@ -143,9 +155,19 @@ public class ClientUI {
                 }
                 break;
             case "observe":
+                if(tokens.length != 3){
+                    System.out.println("Correct usage: observe game <game number>.");
+                }
                 if(tokens.length == 3 && tokens[1].equalsIgnoreCase("game")){
                     facade.listGames();
-                    int num = Integer.parseInt(tokens[2]);
+                    int num;
+                    try{
+                        num = Integer.parseInt(tokens[2]);
+                    }
+                    catch (NumberFormatException exception){
+                        System.out.println("That is not a number. Please use a valid game number.");
+                        return;
+                    }
                     if(num > facade.listGames().size() || num < 1){
                         System.out.println("That game doesn't exist. Please use a valid game number.");
                         return;
