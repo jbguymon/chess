@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import client.NotificationHandler;
 import client.WebSocketClient;
@@ -205,7 +206,19 @@ public class GameplayUI {
         try{
             chess.ChessPosition start = parsePosition(tokens[1]);
             chess.ChessPosition end = parsePosition(tokens[2]);
-            chess.ChessMove move = new ChessMove(start, end, null);
+            ChessPiece.PieceType promotion = null;
+            if(isPromotionMove(start, end)){
+                System.out.print("Promote pawn to (q/r/b/n): ");
+                String promChoice = new Scanner(System.in).nextLine().trim().toLowerCase();
+                promotion = switch (promChoice){
+                    case "q" -> ChessPiece.PieceType.QUEEN;
+                    case "r" -> ChessPiece.PieceType.ROOK;
+                    case "b" -> ChessPiece.PieceType.BISHOP;
+                    case "n" -> ChessPiece.PieceType.KNIGHT;
+                    default -> ChessPiece.PieceType.QUEEN;
+                };
+            }
+            chess.ChessMove move = new ChessMove(start, end, promotion);
             MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
             Gson gson = new Gson();
             String json = gson.toJson(command);
@@ -254,5 +267,9 @@ public class GameplayUI {
         int rowNum = Character.getNumericValue(row);
 
         return new chess.ChessPosition(rowNum, column);
+    }
+
+    private boolean isPromotionMove(ChessPosition start, ChessPosition end){
+        return (start.getRow() == 7 && end.getRow() == 8) || (start.getRow() == 2 && end.getRow() == 1);
     }
 }
