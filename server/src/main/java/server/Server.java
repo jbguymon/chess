@@ -12,12 +12,15 @@ import handler.GameHandler;
 import dataaccess.MySqlDataAccess;
 import dataaccess.DatabaseInitializer;
 import dataaccess.DataAccessException;
+import server.websocket.WebSocketHandler;
 
 public class Server {
 
     private final Javalin javalin;
+    private final MySqlDataAccess data;
 
     public Server() {
+        this.data = new MySqlDataAccess();
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
@@ -40,6 +43,14 @@ public class Server {
         javalin.get("/game", gameHandler::listGames);
         javalin.post("/game", gameHandler::createGame);
         javalin.put("/game", gameHandler::joinGame);
+
+        javalin.ws("/ws", ws -> {
+            WebSocketHandler handler = new WebSocketHandler(data);
+            ws.onConnect(ctx -> handler.onOpen(ctx.session));
+            ws.onMessage(ctx -> handler.onMessage(ctx.message(), ctx.session));
+            ws.onClose(ctx -> handler.onClose(ctx));
+            ws.onError(ctx -> handler.onError(ctx.session, ctx.error()));
+        });
     }
 
     public int run(int desiredPort) {

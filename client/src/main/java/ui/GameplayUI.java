@@ -199,6 +199,10 @@ public class GameplayUI {
     }
 
     private void handleMakeMove(String[] tokens){
+        if(currentGame.isGameOver()){
+            System.out.println("Game is over.");
+            return;
+        }
         if(tokens.length < 3){
             System.out.println("Usage: move <start> <end>.");
             return;
