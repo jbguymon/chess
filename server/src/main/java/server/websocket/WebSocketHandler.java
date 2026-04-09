@@ -64,6 +64,11 @@ public class WebSocketHandler {
         int gameID = cmd.getGameID();
         String authToken = cmd.getAuthToken();
         try {
+            AuthData auth = data.getAuth(authToken);
+            if(auth == null){
+                sendError(ctx, "Unauthorized");
+                return;
+            }
             GameData gameData = data.getGame(gameID);
             if (gameData == null || gameData.game() == null) {
                 sendError(ctx, "Game not found");
@@ -86,12 +91,12 @@ public class WebSocketHandler {
             int gameID = cmd.getGameID();
             String authToken = cmd.getAuthToken();
             GameData gameData = data.getGame(gameID);
-            if (gameData == null || gameData.game() == null) {
-                sendError(ctx, "Game not found");
-                return;
-            }
             ChessGame game = gameData.game();
             String username = getUsername(authToken);
+            if (game.isGameOver()) {
+                sendError(ctx, "Game is over");
+                return;
+            }
             if (!username.equals(gameData.whiteUsername()) &&
                     !username.equals(gameData.blackUsername())) {
                 sendError(ctx, "Observers cannot make moves");
@@ -101,32 +106,42 @@ public class WebSocketHandler {
                 sendError(ctx, "Not your turn");
                 return;
             }
+            ChessGame.TeamColor opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE)
+                    ? ChessGame.TeamColor.BLACK
+                    : ChessGame.TeamColor.WHITE;
+
             game.makeMove(cmd.getMove());
-            ChessGame.TeamColor opponent = game.getTeamTurn();
-            if(game.isInCheckmate(opponent)){
-                game.setGameOver(true);
-                broadcastToGame(gameID,
-                        new NotificationMessage("Checkmate! " + username + " wins."));
-            }
-            if(game.isInStalemate(opponent)){
-                game.setGameOver(true);
-                broadcastToGame(gameID,
-                        new NotificationMessage("Stalemate! Draw."));
-            }
-            GameData updatedGame = new GameData(
+            data.updateGame(new GameData(
                     gameData.gameID(),
                     gameData.whiteUsername(),
                     gameData.blackUsername(),
                     gameData.gameName(),
                     game
-            );
-            data.updateGame(updatedGame);
+            ));
             broadcastToGame(gameID, new LoadGameMessage(game));
-            broadcastToGameExcept(gameID, ctx,
-                    new NotificationMessage(username + " made a move"));
+            boolean checkmate = game.isInCheckmate(opponent);
+            boolean stalemate = game.isInStalemate(opponent);
+            broadcastNotificationExcept(
+                    gameID,
+                    ctx,
+                    username + " made a move"
+            );
+            if (checkmate) {
+                game.setGameOver(true);
+                broadcastNotification(
+                        gameID,
+                        "Checkmate! " + username + " wins."
+                );
+            } else if (stalemate) {
+                game.setGameOver(true);
+                broadcastNotification(
+                        gameID,
+                        "Stalemate! Draw."
+                );
+            }
         }
-        catch (Exception exception) {
-            sendError(ctx, "Invalid move: " + exception.getMessage());
+        catch (Exception e) {
+            sendError(ctx, "Invalid move: " + e.getMessage());
         }
     }
 
@@ -271,6 +286,44 @@ public class WebSocketHandler {
             return auth.username();
         } catch (Exception e) {
             return "Unknown";
+        }
+    }
+
+    private void broadcastNotificationExcept(int gameID, WsContext excludeCtx, String text) {
+        var sessions = gameSessions.get(gameID);
+        if (sessions == null) {
+            return;
+        }
+
+        NotificationMessage notif = new NotificationMessage(text);
+        String json = gson.toJson(notif);
+
+        for (WsContext client : sessions.keySet()) {
+            if (client.session == excludeCtx.session){
+                continue;
+            }
+            if (client.session.isOpen()) {
+                try {
+                    client.send(json);
+                } catch (Exception ignored) {}
+            }
+        }
+    }
+
+    private void broadcastNotification(int gameID, String text) {
+        var sessions = gameSessions.get(gameID);
+        if (sessions == null) {
+            return;
+        }
+
+        NotificationMessage notif = new NotificationMessage(text);
+        String json = gson.toJson(notif);
+
+        for (WsContext client : sessions.keySet()) {
+                try {
+                    client.send(json);
+                }
+                catch (Exception ignored) {}
         }
     }
 }
