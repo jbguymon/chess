@@ -18,8 +18,10 @@ public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private String authToken;
     private List<GameData> gameList;
+    private int port;
 
     public ServerFacade(int port){
+        this.port = port;
         serverUrl = "http://localhost:" + port;
     }
 
@@ -89,6 +91,10 @@ public class ServerFacade {
         if(gameList == null || gameNumber < 1 || gameNumber > gameList.size()){
             throw new ResponseException(ResponseException.Code.ClientError, "invalid game number");
         }
+    }
+
+    public int getPort() {
+        return port;
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {

@@ -1,6 +1,8 @@
 package ui;
 
+import client.NotificationHandler;
 import client.ServerFacade;
+import client.WebSocketClient;
 import model.*;
 
 import java.util.Arrays;
@@ -12,6 +14,10 @@ import chess.ChessBoard;
 public class ClientUI {
     private final ServerFacade facade;
     private boolean isLoggedIn = false;
+    private Integer currentGameID;
+    private boolean isInGame = false;
+    private String playerColor;
+    private WebSocketClient webSocketClient;
 
     public ClientUI(int port){
         this.facade = new ServerFacade(port);
@@ -144,11 +150,11 @@ public class ClientUI {
                         return;
                     }
                     facade.joinGame(gameNum, color);
-                    System.out.println("Successfully join game.");
-                    ChessBoard board = new ChessBoard();
-                    board.resetBoard();
-                    boolean isWhite = color.equals("WHITE");
-                    ChessBoardUI.displayBoard(board, isWhite);
+                    System.out.println("Successfully join game as " + color + ".");
+                    this.currentGameID = gameNum;
+                    this.playerColor = color;
+                    this.isInGame = true;
+                    startGameplay();
                 }
                 else{
                     System.out.println("Unknown command. Did you mean 'play game'?");
@@ -174,9 +180,10 @@ public class ClientUI {
                     }
                     facade.observeGame(num);
                     System.out.println("Successfully observing game");
-                    ChessBoard board = new ChessBoard();
-                    board.resetBoard();
-                    ChessBoardUI.displayBoard(board, true);
+                    this.currentGameID = num;
+                    this.playerColor = null;
+                    this.isInGame = true;
+                    startGameplay();
                 }
                 else{
                     System.out.println("Unknown command. Did you mean 'observe game'?");
@@ -200,6 +207,7 @@ public class ClientUI {
                         quit
                 """);
     }
+
     private void printHelpPostLogin(){
         System.out.println("""
                 Commands:
@@ -211,6 +219,7 @@ public class ClientUI {
                 help
                 quit""");
     }
+
     private void printGames(List<GameData> games){
         for(int i = 0; i < games.size(); i++){
             GameData gameData = games.get(i);
@@ -218,5 +227,24 @@ public class ClientUI {
                     gameData.whiteUsername() == null ? "-" : gameData.whiteUsername(),
                     gameData.blackUsername() == null ? "-" : gameData.blackUsername());
         }
+    }
+
+    private void startGameplay(){
+        NotificationHandler handler = this::handleServerMessage(String json);
+        String wsURL = "ws://localhost:" + facade.getPort() + "/ws";
+        sendConnectCommand();
+        runGamePlayLoop();
+    }
+
+    private void runGamePlayLoop() {
+
+    }
+
+    private void sendConnectCommand(){
+
+    }
+
+    private void handleServerMessage(String json){
+
     }
 }
