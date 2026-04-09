@@ -1,6 +1,5 @@
 package ui;
 
-import client.NotificationHandler;
 import client.ServerFacade;
 import client.WebSocketClient;
 import model.*;
@@ -8,8 +7,7 @@ import model.*;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.List;
-
-import chess.ChessBoard;
+import ui.GameplayUI;
 
 public class ClientUI {
     private final ServerFacade facade;
@@ -18,6 +16,7 @@ public class ClientUI {
     private boolean isInGame = false;
     private String playerColor;
     private WebSocketClient webSocketClient;
+    private String authToken;
 
     public ClientUI(int port){
         this.facade = new ServerFacade(port);
@@ -75,6 +74,7 @@ public class ClientUI {
                     return;
                 }
                 facade.register(tokens[1], tokens[2], tokens[3]);
+                this.authToken = facade.getAuthToken();
                 System.out.println("Registered and automatically logged in.");
                 isLoggedIn = true;
                 break;
@@ -84,6 +84,7 @@ public class ClientUI {
                     return;
                 }
                 facade.login(tokens[1], tokens[2]);
+                this.authToken = facade.getAuthToken();
                 System.out.println("Successfully logged in.");
                 isLoggedIn = true;
                 break;
@@ -104,6 +105,7 @@ public class ClientUI {
             case "logout":
                 facade.logout();
                 isLoggedIn = false;
+                authToken = null;
                 System.out.println("Logged out.");
                 break;
             case "create":
@@ -151,10 +153,7 @@ public class ClientUI {
                     }
                     facade.joinGame(gameNum, color);
                     System.out.println("Successfully join game as " + color + ".");
-                    this.currentGameID = gameNum;
-                    this.playerColor = color;
-                    this.isInGame = true;
-                    startGameplay();
+                    new GameplayUI(authToken, gameNum, color, facade).run();
                 }
                 else{
                     System.out.println("Unknown command. Did you mean 'play game'?");
@@ -180,10 +179,7 @@ public class ClientUI {
                     }
                     facade.observeGame(num);
                     System.out.println("Successfully observing game");
-                    this.currentGameID = num;
-                    this.playerColor = null;
-                    this.isInGame = true;
-                    startGameplay();
+                    new GameplayUI(authToken, num, null, facade).run();
                 }
                 else{
                     System.out.println("Unknown command. Did you mean 'observe game'?");
@@ -227,24 +223,5 @@ public class ClientUI {
                     gameData.whiteUsername() == null ? "-" : gameData.whiteUsername(),
                     gameData.blackUsername() == null ? "-" : gameData.blackUsername());
         }
-    }
-
-    private void startGameplay(){
-        NotificationHandler handler = this::handleServerMessage(String json);
-        String wsURL = "ws://localhost:" + facade.getPort() + "/ws";
-        sendConnectCommand();
-        runGamePlayLoop();
-    }
-
-    private void runGamePlayLoop() {
-
-    }
-
-    private void sendConnectCommand(){
-
-    }
-
-    private void handleServerMessage(String json){
-
     }
 }

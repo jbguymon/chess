@@ -97,6 +97,10 @@ public class ServerFacade {
         return port;
     }
 
+    public String getAuthToken(){
+        return authToken;
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
