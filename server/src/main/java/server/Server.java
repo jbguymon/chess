@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.DatabaseManager;
 import io.javalin.*;
-import dataaccess.MemoryDataAccess;
 import service.ClearService;
 import handler.ClearHandler;
 import service.UserService;
@@ -16,11 +14,9 @@ import server.websocket.WebSocketHandler;
 
 public class Server {
 
-    private final Javalin javalin;
-    private final MySqlDataAccess data;
+    private final Javalin javalin;;
 
     public Server() {
-        this.data = new MySqlDataAccess();
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
