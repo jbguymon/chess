@@ -1,4 +1,4 @@
-package websocket;
+package client;
 
 import jakarta.websocket.*;
 import java.net.URI;
