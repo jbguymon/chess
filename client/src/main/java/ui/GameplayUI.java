@@ -222,7 +222,7 @@ public class GameplayUI {
         try {
             chess.ChessPosition position = parsePosition(tokens[1]);
             if (currentGame == null) {
-                System.out.println("No game loaded yet.");
+                System.out.println("No game loaded.");
                 return;
             }
             var validMoves = currentGame.validMoves(position);
@@ -236,7 +236,7 @@ public class GameplayUI {
                 System.out.println("Highlighted legal moves from " + tokens[1]);
             }
         } catch (Exception e) {
-            System.out.println("Invalid square. Example: highlight e4");
+            System.out.println("Invalid square.");
         }
     }
 
