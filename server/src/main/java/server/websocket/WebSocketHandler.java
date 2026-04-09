@@ -125,16 +125,44 @@ public class WebSocketHandler {
             broadcastToGameExcept(gameID, ctx,
                     new NotificationMessage(username + " made a move"));
         }
-        catch (Exception e) {
-            sendError(ctx, "Invalid move: " + e.getMessage());
+        catch (Exception exception) {
+            sendError(ctx, "Invalid move: " + exception.getMessage());
         }
     }
 
     private void handleLeave(UserGameCommand cmd, WsContext ctx) {
-        removeSessionFromGame(cmd.getGameID(), ctx);
-        String username = getUsername(cmd.getAuthToken());
-        broadcastToGame(cmd.getGameID(),
-                new NotificationMessage(username + " left the game"));
+        int gameID = cmd.getGameID();
+        String authToken = cmd.getAuthToken();
+        try {
+            GameData gameData = data.getGame(gameID);
+            if (gameData == null) {
+                sendError(ctx, "Game not found");
+                return;
+            }
+            String username = getUsername(authToken);
+            String white = gameData.whiteUsername();
+            String black = gameData.blackUsername();
+            if (username.equals(white)) {
+                white = null;
+            } else if (username.equals(black)) {
+                black = null;
+            }
+            GameData updatedGame = new GameData(
+                    gameID,
+                    white,
+                    black,
+                    gameData.gameName(),
+                    gameData.game()
+            );
+            data.updateGame(updatedGame);
+            removeSessionFromGame(gameID, ctx);
+            broadcastToGameExcept(gameID, ctx,
+                    new NotificationMessage(username + " left the game"));
+
+        }
+        catch (Exception exception) {
+            sendError(ctx, "Error leaving game");
+        }
     }
 
     private void handleResign(UserGameCommand cmd, WsContext ctx) {
