@@ -104,6 +104,57 @@ public class GameplayUI {
     }
 
     private void handleGameplayCommand(String input){
+        if(input.isBlank()){
+            return;
+        }
+        String[] tokens = input.trim().split("\\s+");
+        String command = tokens[0].toLowerCase();
+        try{
+            switch (command){
+                case "help":
+                    printGameplayHelp();
+                    break;
+
+                case "redraw":
+                    redrawBoard();
+                    break;
+
+                case "move":
+                    System.out.println("not handled yet.");
+                    break;
+                case "highlight":
+                    System.out.println("not handled yet");
+                    break;
+                case "resign":
+                    handleResign();
+                    break;
+                default:
+                    System.out.println("Unknown Command.");
+                    printGameplayHelp();
+            }
+        }
+        catch(Exception exception){
+            System.out.println("Error: " + exception.getMessage());
+        }
+    }
+
+    private void printGameplayHelp(){
+        System.out.println("""
+                Gameplay Commands:
+                move <start> <end>
+                highlight <square>
+                redraw
+                resign
+                leave
+                help
+                """);
+    }
+
+    private void redrawBoard(){
+
+    }
+
+    private void handleResign(){
 
     }
 }
