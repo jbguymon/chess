@@ -100,7 +100,15 @@ public class GameplayUI {
     }
 
     private void sendLeaveCommand(){
-
+        try{
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            Gson gson = new Gson();
+            String json = gson.toJson(command);
+            webSocketClient.sendMessage(json);
+        }
+        catch(Exception exception){
+            System.out.println("Failed to leave game.");
+        }
     }
 
     private void handleGameplayCommand(String input){
@@ -151,10 +159,34 @@ public class GameplayUI {
     }
 
     private void redrawBoard(){
-
+        if(currentGame == null){
+            System.out.println("No board to display currently.");
+            return;
+        }
+        boolean isWhite = Objects.equals(playerColor, "WHITE") || playerColor == null;
+        ChessBoardUI.displayBoard(currentGame.getBoard(), isWhite);
     }
 
     private void handleResign(){
+        System.out.print("Do you actually want to resign? (y/n): ");
+        Scanner scanner = new Scanner(System.in);
+        if(scanner.nextLine().trim().equalsIgnoreCase("y")){
+            sendResignCommand();
+        }
+        else{
+            System.out.println("Not resigning.");
+        }
+    }
 
+    private void sendResignCommand(){
+        try{
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            Gson gson = new Gson();
+            String json = gson.toJson(command);
+            webSocketClient.sendMessage(json);
+        }
+        catch (Exception exception){
+            System.out.println("Failed to resign.");
+        }
     }
 }
