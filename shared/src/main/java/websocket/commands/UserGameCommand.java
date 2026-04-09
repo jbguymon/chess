@@ -22,7 +22,11 @@ public class UserGameCommand {
         this.gameID = gameID;
     }
 
-    public UserGameCommand(){}
+    public UserGameCommand(){
+        commandType = null;
+        authToken = null;
+        gameID = null;
+    }
 
     public enum CommandType {
         CONNECT,
