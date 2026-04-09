@@ -46,10 +46,10 @@ public class Server {
 
         javalin.ws("/ws", ws -> {
             WebSocketHandler handler = new WebSocketHandler(data);
-            ws.onConnect(ctx -> handler.onOpen(ctx.session));
-            ws.onMessage(ctx -> handler.onMessage(ctx.message(), ctx.session));
-            ws.onClose(ctx -> handler.onClose(ctx));
-            ws.onError(ctx -> handler.onError(ctx.session, ctx.error()));
+            ws.onConnect(handler::onConnect);
+            ws.onMessage(handler::onMessage);
+            ws.onClose(handler::onClose);
+            ws.onError(handler::onError);
         });
     }
 
