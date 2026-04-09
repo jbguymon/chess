@@ -1,8 +1,11 @@
 package ui;
 
 import chess.ChessMove;
+import chess.ChessPosition;
 import client.NotificationHandler;
 import client.WebSocketClient;
+
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.Objects;
 
@@ -232,7 +235,7 @@ public class GameplayUI {
                 System.out.println("No legal moves from " + tokens[1]);
                 ChessBoardUI.displayBoard(currentGame.getBoard(), isWhitePerspective); // normal redraw
             } else {
-                ChessBoardUI.displayBoardWithHighlights(currentGame.getBoard(), isWhitePerspective, validMoves, position);
+                ChessBoardUI.displayBoardWithHighlights(currentGame.getBoard(), isWhitePerspective, position, validMoves);
                 System.out.println("Highlighted legal moves from " + tokens[1]);
             }
         } catch (Exception e) {
