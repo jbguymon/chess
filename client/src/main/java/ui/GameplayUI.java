@@ -1,9 +1,12 @@
 package ui;
 
+import chess.ChessMove;
 import client.NotificationHandler;
 import client.WebSocketClient;
 import java.util.Scanner;
 import java.util.Objects;
+
+import websocket.commands.MakeMoveCommand;
 import websocket.messages.*;
 
 import com.google.gson.Gson;
@@ -129,10 +132,10 @@ public class GameplayUI {
                     break;
 
                 case "move":
-                    System.out.println("not handled yet.");
+                    handleMakeMove(tokens);
                     break;
                 case "highlight":
-                    System.out.println("not handled yet");
+                    handleHighlight(tokens);
                     break;
                 case "resign":
                     handleResign();
@@ -189,5 +192,64 @@ public class GameplayUI {
         catch (Exception exception){
             System.out.println("Failed to resign.");
         }
+    }
+
+    private void handleMakeMove(String[] tokens){
+        if(tokens.length < 3){
+            System.out.println("Usage: move <start> <end>.");
+            return;
+        }
+        try{
+            chess.ChessPosition start = parsePosition(tokens[1]);
+            chess.ChessPosition end = parsePosition(tokens[2]);
+            chess.ChessMove move = new ChessMove(start, end, null);
+            MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
+            Gson gson = new Gson();
+            String json = gson.toJson(command);
+            webSocketClient.sendMessage(json);
+            System.out.println("Moved: " + tokens[1] + " to " + tokens[2]);
+        }
+        catch(Exception exception){
+            System.out.println("Invalid move format.");
+        }
+    }
+
+    private void handleHighlight(String[] tokens){
+        if (tokens.length < 2) {
+            System.out.println("Usage: highlight <tile>");
+            return;
+        }
+        try {
+            chess.ChessPosition position = parsePosition(tokens[1]);
+            if (currentGame == null) {
+                System.out.println("No game loaded yet.");
+                return;
+            }
+            var validMoves = currentGame.validMoves(position);
+            boolean isWhitePerspective = Objects.equals(playerColor, "WHITE") || playerColor == null;
+
+            if (validMoves == null || validMoves.isEmpty()) {
+                System.out.println("No legal moves from " + tokens[1]);
+                ChessBoardUI.displayBoard(currentGame.getBoard(), isWhitePerspective); // normal redraw
+            } else {
+                ChessBoardUI.displayBoardWithHighlights(currentGame.getBoard(), isWhitePerspective, validMoves, position);
+                System.out.println("Highlighted legal moves from " + tokens[1]);
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid square. Example: highlight e4");
+        }
+    }
+
+    private chess.ChessPosition parsePosition(String pos){
+        if (pos.length() != 2) {
+            throw new IllegalArgumentException("Invalid position");
+        }
+        char col = pos.charAt(0);
+        char row = pos.charAt(1);
+
+        int column = col - 'a' + 1;
+        int rowNum = Character.getNumericValue(row);
+
+        return new chess.ChessPosition(rowNum, column);
     }
 }
