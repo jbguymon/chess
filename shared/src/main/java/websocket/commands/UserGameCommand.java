@@ -22,6 +22,8 @@ public class UserGameCommand {
         this.gameID = gameID;
     }
 
+    public UserGameCommand(){}
+
     public enum CommandType {
         CONNECT,
         MAKE_MOVE,

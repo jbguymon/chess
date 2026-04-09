@@ -4,6 +4,7 @@ import client.NotificationHandler;
 import client.WebSocketClient;
 import java.util.Scanner;
 import java.util.Objects;
+import websocket.messages.*;
 
 import com.google.gson.Gson;
 import websocket.*;
@@ -73,19 +74,19 @@ public class GameplayUI {
             }
             switch (message.getServerMessageType()){
                 case LOAD_GAME:
-                    LoadGameMessage loadMsg = LoadGameMessage message;
+                    LoadGameMessage loadMsg = gson.fromJson(json, LoadGameMessage.class);
                     this.currentGame = loadMsg.getGame();
                     boolean isWhite = Objects.equals(playerColor, "WHITE") || playerColor == null;
                     ChessBoardUI.displayBoard(currentGame.getBoard(), isWhite);
                     break;
 
                 case NOTIFICATION:
-                    NotificationMessage notif = NotificationMessage message;
+                    NotificationMessage notif = gson.fromJson(json, NotificationMessage.class);
                     System.out.println(notif.getMessage());
                     break;
 
                 case ERROR:
-                    ErrorMessage err = ErrorMessage message;
+                    ErrorMessage err = gson.fromJson(json, ErrorMessage.class);
                     System.out.println("Error: " + err.getErrorMessage());
                     break;
 
