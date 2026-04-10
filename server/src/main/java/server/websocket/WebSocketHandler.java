@@ -91,6 +91,10 @@ public class WebSocketHandler {
             int gameID = cmd.getGameID();
             String authToken = cmd.getAuthToken();
             GameData gameData = data.getGame(gameID);
+            if (gameData == null || gameData.game() == null) {
+                sendError(ctx, "Game not found");
+                return;
+            }
             ChessGame game = gameData.game();
             String username = getUsername(authToken);
             if (game.isGameOver()) {
@@ -106,76 +110,68 @@ public class WebSocketHandler {
                 sendError(ctx, "Not your turn");
                 return;
             }
-            ChessGame.TeamColor opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE)
-                    ? ChessGame.TeamColor.BLACK
-                    : ChessGame.TeamColor.WHITE;
-
             game.makeMove(cmd.getMove());
-            data.updateGame(new GameData(
+            boolean isCheckmate = game.isInCheckmate(game.getTeamTurn());
+            boolean isStalemate = game.isInStalemate(game.getTeamTurn());
+            GameData updatedGame = new GameData(
                     gameData.gameID(),
                     gameData.whiteUsername(),
                     gameData.blackUsername(),
                     gameData.gameName(),
                     game
-            ));
-            broadcastToGame(gameID, new LoadGameMessage(game));
-            boolean checkmate = game.isInCheckmate(opponent);
-            boolean stalemate = game.isInStalemate(opponent);
-            broadcastNotificationExcept(
-                    gameID,
-                    ctx,
-                    username + " made a move"
             );
-            if (checkmate) {
+            data.updateGame(updatedGame);
+            broadcastToGame(gameID, new LoadGameMessage(game));
+            broadcastNotificationExcept(gameID, ctx, username + " made a move");
+            if (isCheckmate) {
                 game.setGameOver(true);
-                broadcastNotification(
-                        gameID,
-                        "Checkmate! " + username + " wins."
-                );
-            } else if (stalemate) {
+                broadcastNotification(gameID, "Checkmate! " + username + " wins.");
+            }
+            else if (isStalemate) {
                 game.setGameOver(true);
-                broadcastNotification(
-                        gameID,
-                        "Stalemate! Draw."
-                );
+                broadcastNotification(gameID, "Stalemate! Draw.");
             }
         }
-        catch (Exception e) {
-            sendError(ctx, "Invalid move: " + e.getMessage());
+        catch (Exception exception) {
+            String errorMsg = exception.getMessage() != null ? exception.getMessage() : "Invalid move";
+            System.err.println("Invalid move attempted by " + getUsername(cmd.getAuthToken()) + ": " + errorMsg);
+            sendError(ctx, "Invalid move. You made an illegal or invalid move.");
         }
     }
 
     private void handleLeave(UserGameCommand cmd, WsContext ctx) {
-        int gameID = cmd.getGameID();
-        String authToken = cmd.getAuthToken();
         try {
-            GameData gameData = data.getGame(gameID);
-            if (gameData == null) {
-                sendError(ctx, "Game not found");
-                return;
-            }
+            int gameID = cmd.getGameID();
+            String authToken = cmd.getAuthToken();
             String username = getUsername(authToken);
-            String white = gameData.whiteUsername();
-            String black = gameData.blackUsername();
-            if (username.equals(white)) {
-                white = null;
-            } else if (username.equals(black)) {
-                black = null;
-            }
-            GameData updatedGame = new GameData(
-                    gameID,
-                    white,
-                    black,
-                    gameData.gameName(),
-                    gameData.game()
-            );
-            data.updateGame(updatedGame);
             removeSessionFromGame(gameID, ctx);
+            try {
+                GameData gameData = data.getGame(gameID);
+                if (gameData != null) {
+                    String white = gameData.whiteUsername();
+                    String black = gameData.blackUsername();
+                    if (username.equals(white)) {
+                        white = null;
+                    } else if (username.equals(black)) {
+                        black = null;
+                    }
+                    GameData updatedGame = new GameData(
+                            gameID,
+                            white,
+                            black,
+                            gameData.gameName(),
+                            gameData.game()
+                    );
+                    data.updateGame(updatedGame);
+                }
+            } catch (Exception dbEx) {
+                System.err.println("Warning: Could not clear player slot on leave (game may be over): " + dbEx.getMessage());
+            }
             broadcastToGameExcept(gameID, ctx,
                     new NotificationMessage(username + " left the game"));
-
-        }
-        catch (Exception exception) {
+            System.out.println("✅ " + username + " left game " + gameID + " successfully");
+        } catch (Exception e) {
+            System.err.println("Error in handleLeave: " + e.getMessage());
             sendError(ctx, "Error leaving game");
         }
     }
