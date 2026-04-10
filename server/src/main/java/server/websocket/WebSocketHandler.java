@@ -225,7 +225,9 @@ public class WebSocketHandler {
 
     private void broadcastToGame(int gameID, ServerMessage message) {
         var sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        if (sessions == null){
+            return;
+        }
 
         String json = gson.toJson(message);
 
@@ -240,7 +242,9 @@ public class WebSocketHandler {
 
     private void broadcastToGameExcept(int gameID, WsContext exclude, ServerMessage message) {
         var sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        if (sessions == null){
+            return;
+        }
         String json = gson.toJson(message);
         for (WsContext client : sessions.keySet()) {
             if (client != exclude && client.session.isOpen()) {
@@ -282,7 +286,9 @@ public class WebSocketHandler {
     private String getUsername(String authToken) {
         try {
             AuthData auth = data.getAuth(authToken);
-            if (auth == null) return "Unknown";
+            if (auth == null){
+                return "Unknown";
+            }
             return auth.username();
         } catch (Exception e) {
             return "Unknown";
