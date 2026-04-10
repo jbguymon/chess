@@ -42,7 +42,10 @@ public class Server {
 
         WebSocketHandler handler = new WebSocketHandler(data);
         javalin.ws("/ws", ws -> {
-            ws.onConnect(handler::onConnect);
+            ws.onConnect(ctx -> {
+                ctx.enableAutomaticPings();
+                handler.onConnect(ctx);
+            });
             ws.onMessage(handler::onMessage);
             ws.onClose(handler::onClose);
             ws.onError(handler::onError);

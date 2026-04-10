@@ -1,5 +1,7 @@
 package server.websocket;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import dataaccess.MySqlDataAccess;
 import io.javalin.websocket.*;
 import model.AuthData;
@@ -78,10 +80,20 @@ public class WebSocketHandler {
                     .put(ctx, authToken);
             sendToClient(ctx, new LoadGameMessage(gameData.game()));
             String username = getUsername(authToken);
+            String color;
+            if(username.equals(gameData.whiteUsername())){
+                color = "WHITE";
+            }
+            else if(username.equals(gameData.blackUsername())){
+                color = "BLACK";
+            }
+            else{
+                color = "observer";
+            }
             broadcastToGameExcept(gameID, ctx,
-                    new NotificationMessage(username + " joined the game"));
-
-        } catch (Exception e) {
+                    new NotificationMessage(username + " joined the game as " + color + "."));
+        }
+        catch (Exception exception) {
             sendError(ctx, "Failed to connect to game");
         }
     }
@@ -110,6 +122,7 @@ public class WebSocketHandler {
                 sendError(ctx, "Not your turn");
                 return;
             }
+            ChessMove move = cmd.getMove();
             game.makeMove(cmd.getMove());
             boolean isCheckmate = game.isInCheckmate(game.getTeamTurn());
             boolean isStalemate = game.isInStalemate(game.getTeamTurn());
@@ -122,7 +135,8 @@ public class WebSocketHandler {
             );
             data.updateGame(updatedGame);
             broadcastToGame(gameID, new LoadGameMessage(game));
-            broadcastNotificationExcept(gameID, ctx, username + " made a move");
+            broadcastNotificationExcept(gameID, ctx, username + " made a move: " +
+                    moveParser(move.getStartPosition()) + " " + moveParser(move.getEndPosition()));
             if (isCheckmate) {
                 game.setGameOver(true);
                 broadcastNotification(gameID, "Checkmate! " + username + " wins.");
@@ -327,5 +341,11 @@ public class WebSocketHandler {
                 }
                 catch (Exception ignored) {}
         }
+    }
+
+    private String moveParser(ChessPosition position){
+        char file = (char) ('a' + position.getColumn() - 1);
+        int rank = position.getRow();
+        return file + String.valueOf(rank);
     }
 }
