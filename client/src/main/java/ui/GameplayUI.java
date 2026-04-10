@@ -6,14 +6,12 @@ import chess.ChessPosition;
 import client.NotificationHandler;
 import client.WebSocketClient;
 
-import java.util.Collection;
 import java.util.Scanner;
 import java.util.Objects;
 
 import websocket.commands.MakeMoveCommand;
 import websocket.messages.*;
 
-import com.google.gson.Gson;
 import chess.ChessGame;
 import client.ServerFacade;
 import websocket.commands.UserGameCommand;
@@ -61,9 +59,8 @@ public class GameplayUI {
 
     private void sendConnectCommand(){
         try{
-            Gson gson = new Gson();
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
-            String json = gson.toJson(command);
+            String json = facade.getGson().toJson(command);
             webSocketClient.sendMessage(json);
         }
         catch (Exception exception){
@@ -73,26 +70,25 @@ public class GameplayUI {
 
     private void handleServerMessage(String json){
         try{
-            Gson gson = new Gson();
-            ServerMessage message = gson.fromJson(json, ServerMessage.class);
+            ServerMessage message = facade.getGson().fromJson(json, ServerMessage.class);
             if(message == null){
                 return;
             }
             switch (message.getServerMessageType()){
                 case LOAD_GAME:
-                    LoadGameMessage loadMsg = gson.fromJson(json, LoadGameMessage.class);
+                    LoadGameMessage loadMsg = facade.getGson().fromJson(json, LoadGameMessage.class);
                     this.currentGame = loadMsg.getGame();
                     boolean isWhite = Objects.equals(playerColor, "WHITE") || playerColor == null;
                     ChessBoardUI.displayBoard(currentGame.getBoard(), isWhite);
                     break;
 
                 case NOTIFICATION:
-                    NotificationMessage notif = gson.fromJson(json, NotificationMessage.class);
+                    NotificationMessage notif = facade.getGson().fromJson(json, NotificationMessage.class);
                     System.out.println(notif.getMessage());
                     break;
 
                 case ERROR:
-                    ErrorMessage err = gson.fromJson(json, ErrorMessage.class);
+                    ErrorMessage err = facade.getGson().fromJson(json, ErrorMessage.class);
                     System.out.println("Error: " + err.getErrorMessage());
                     break;
 
@@ -102,15 +98,13 @@ public class GameplayUI {
         }
         catch(Exception exception){
             System.out.println("Failed to parse message: " + json);
-            exception.printStackTrace();
         }
     }
 
     private void sendLeaveCommand(){
         try{
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
-            Gson gson = new Gson();
-            String json = gson.toJson(command);
+            String json = facade.getGson().toJson(command);
             webSocketClient.sendMessage(json);
         }
         catch(Exception exception){
@@ -188,8 +182,7 @@ public class GameplayUI {
     private void sendResignCommand(){
         try{
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
-            Gson gson = new Gson();
-            String json = gson.toJson(command);
+            String json = facade.getGson().toJson(command);
             webSocketClient.sendMessage(json);
         }
         catch (Exception exception){
@@ -223,8 +216,7 @@ public class GameplayUI {
             }
             chess.ChessMove move = new ChessMove(start, end, promotion);
             MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
-            Gson gson = new Gson();
-            String json = gson.toJson(command);
+            String json = facade.getGson().toJson(command);
             webSocketClient.sendMessage(json);
             System.out.println("Moved: " + tokens[1] + " to " + tokens[2]);
         }

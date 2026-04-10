@@ -95,7 +95,7 @@ public class SqlDataAccessTest {
 
     @Test
     void createGamePositive() throws DataAccessException {
-        int id = data.createGame("game1", new ChessGame());
+        int id = data.createGame("game1");
         GameData game = data.getGame(id);
         assertNotNull(game);
         assertEquals("game1", game.gameName());
@@ -103,12 +103,12 @@ public class SqlDataAccessTest {
 
     @Test
     void createGameNegativeNullName() {
-        assertThrows(DataAccessException.class, () -> data.createGame(null, new ChessGame()));
+        assertThrows(DataAccessException.class, () -> data.createGame(null));
     }
 
     @Test
     void getGamePositive() throws DataAccessException {
-        int id = data.createGame("game1", new ChessGame());
+        int id = data.createGame("game1");
         GameData game = data.getGame(id);
         assertNotNull(game);
     }
@@ -120,8 +120,8 @@ public class SqlDataAccessTest {
 
     @Test
     void listGamesPositive() throws DataAccessException {
-        data.createGame("game1", new ChessGame());
-        data.createGame("game2", new ChessGame());
+        data.createGame("game1");
+        data.createGame("game2");
         List<GameData> games = data.listGames();
         assertEquals(2, games.size());
     }
@@ -134,7 +134,7 @@ public class SqlDataAccessTest {
 
     @Test
     void updateGamePositive() throws DataAccessException {
-        int id = data.createGame("game1", new ChessGame());
+        int id = data.createGame("game1");
         GameData game = data.getGame(id);
         GameData updated = new GameData(
                 id,
@@ -157,7 +157,7 @@ public class SqlDataAccessTest {
 
     @Test
     void clearPositive() throws DataAccessException {
-        data.createGame("game1", new ChessGame());
+        data.createGame("game1");
         data.createUser(new UserData("joe", "pass", "joe@joe.com"));
         data.clear();
         assertTrue(data.listGames().isEmpty());

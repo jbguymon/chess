@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketHandler {
-    private static final ConcurrentHashMap<Integer, ConcurrentHashMap<WsContext, String>> gameSessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<WsContext, String>> gameSessions = new ConcurrentHashMap<>();
     private final MySqlDataAccess data;
     private final Gson gson = new Gson();
 
@@ -44,9 +44,8 @@ public class WebSocketHandler {
                 default -> sendError(ctx, "Unknown command type");
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendError(ctx, "Error processing command: " + e.getMessage());
+        } catch (Exception exception) {
+            sendError(ctx, "Error processing command: " + exception.getMessage());
         }
     }
 

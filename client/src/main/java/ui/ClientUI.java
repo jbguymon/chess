@@ -133,7 +133,7 @@ public class ClientUI {
                 break;
             case "play":
                 if(tokens.length == 4 && tokens[1].equalsIgnoreCase("game")){
-                    facade.listGames();
+                    List<GameData> games = facade.listGames();
                     int gameNum;
                     try{
                         gameNum = Integer.parseInt(tokens[2]);
@@ -151,9 +151,11 @@ public class ClientUI {
                         System.out.println("That game doesn't exist. Please use a valid game number.");
                         return;
                     }
+                    GameData chosenGame = games.get(gameNum - 1);
+                    int gameID = chosenGame.gameID();
                     facade.joinGame(gameNum, color);
                     System.out.println("Successfully join game as " + color + ".");
-                    new GameplayUI(authToken, gameNum, color, facade).run();
+                    new GameplayUI(authToken, gameID, color, facade).run();
                 }
                 else{
                     System.out.println("Unknown command. Did you mean 'play game'?");
@@ -164,7 +166,7 @@ public class ClientUI {
                     System.out.println("Correct usage: observe game <game number>.");
                 }
                 if(tokens.length == 3 && tokens[1].equalsIgnoreCase("game")){
-                    facade.listGames();
+                    List<GameData> games = facade.listGames();
                     int num;
                     try{
                         num = Integer.parseInt(tokens[2]);
@@ -177,9 +179,11 @@ public class ClientUI {
                         System.out.println("That game doesn't exist. Please use a valid game number.");
                         return;
                     }
+                    GameData chosenGame = games.get(num - 1);
+                    int gameID = chosenGame.gameID();
                     facade.observeGame(num);
                     System.out.println("Successfully observing game");
-                    new GameplayUI(authToken, num, null, facade).run();
+                    new GameplayUI(authToken, gameID, null, facade).run();
                 }
                 else{
                     System.out.println("Unknown command. Did you mean 'observe game'?");

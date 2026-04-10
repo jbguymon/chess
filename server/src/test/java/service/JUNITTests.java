@@ -47,7 +47,7 @@ public class JUNITTests {
 
     @Test
     void listGamesSuccess() throws Exception {
-        int id = data.createGame("Game 1", new ChessGame());
+        int id = data.createGame("Game 1");
         ListGamesResponse response = gameService.listGames(authToken);
         assertNotNull(response);
         List<GameData> games = response.games();
@@ -63,7 +63,7 @@ public class JUNITTests {
 
     @Test
     void joinGameSuccessWhite() throws Exception {
-        int gameId = data.createGame("Join Test", new ChessGame());
+        int gameId = data.createGame("Join Test");
         JoinGameRequest request = new JoinGameRequest("WHITE", gameId);
         gameService.joinGame(authToken, request);
         GameData game = data.getGame(gameId);
@@ -73,7 +73,7 @@ public class JUNITTests {
 
     @Test
     void joinGameSuccessBlack() throws Exception {
-        int gameId = data.createGame("Join Test 2", new ChessGame());
+        int gameId = data.createGame("Join Test 2");
         data.updateGame(new GameData(gameId, "bob", null, "Join Test 2", null));
         JoinGameRequest request = new JoinGameRequest("BLACK", gameId);
         gameService.joinGame(authToken, request);
@@ -84,7 +84,7 @@ public class JUNITTests {
 
     @Test
     void joinGameAlreadyTaken() throws Exception {
-        int gameId = data.createGame("Taken Test", new ChessGame());
+        int gameId = data.createGame("Taken Test");
         data.updateGame(new GameData(gameId, "bob", null, "Taken Test", null));
         JoinGameRequest request = new JoinGameRequest("WHITE", gameId);
         Exception exception = assertThrows(Exception.class, () -> gameService.joinGame(authToken, request));
@@ -93,7 +93,7 @@ public class JUNITTests {
 
     @Test
     void joinGameBadRequestInvalidColor() throws Exception {
-        int gameId = data.createGame("Bad Color Test", new ChessGame());
+        int gameId = data.createGame("Bad Color Test");
         JoinGameRequest request = new JoinGameRequest("GREEN", gameId);
         Exception exception = assertThrows(Exception.class, () -> gameService.joinGame(authToken, request));
         assertEquals("bad request", exception.getMessage());
@@ -101,7 +101,7 @@ public class JUNITTests {
 
     @Test
     void joinGameUnauthorized() throws Exception {
-        int gameId = data.createGame("Unauthorized Test", new ChessGame());
+        int gameId = data.createGame("Unauthorized Test");
         JoinGameRequest request = new JoinGameRequest("WHITE", gameId);
         Exception exception = assertThrows(Exception.class, () -> gameService.joinGame("bad-token", request));
         assertEquals("unauthorized", exception.getMessage());

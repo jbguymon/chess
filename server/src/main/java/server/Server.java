@@ -40,8 +40,8 @@ public class Server {
         javalin.post("/game", gameHandler::createGame);
         javalin.put("/game", gameHandler::joinGame);
 
+        WebSocketHandler handler = new WebSocketHandler(data);
         javalin.ws("/ws", ws -> {
-            WebSocketHandler handler = new WebSocketHandler(data);
             ws.onConnect(handler::onConnect);
             ws.onMessage(handler::onMessage);
             ws.onClose(handler::onClose);

@@ -19,6 +19,7 @@ public class ServerFacade {
     private String authToken;
     private List<GameData> gameList;
     private int port;
+    private final Gson gson = new Gson();
 
     public ServerFacade(int port){
         this.port = port;
@@ -160,5 +161,9 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status){
         return status / 100 == 2;
+    }
+
+    public Gson getGson(){
+        return gson;
     }
 }
