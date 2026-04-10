@@ -14,7 +14,6 @@ import websocket.commands.MakeMoveCommand;
 import websocket.messages.*;
 
 import com.google.gson.Gson;
-import websocket.*;
 import chess.ChessGame;
 import client.ServerFacade;
 import websocket.commands.UserGameCommand;
@@ -212,7 +211,7 @@ public class GameplayUI {
             chess.ChessPosition end = parsePosition(tokens[2]);
             ChessPiece.PieceType promotion = null;
             if(isPromotionMove(start, end)){
-                System.out.print("Promote pawn to (q/r/b/n): ");
+                System.out.print("What would you like to promote to (q/r/b/n)?: ");
                 String promChoice = new Scanner(System.in).nextLine().trim().toLowerCase();
                 promotion = switch (promChoice){
                     case "q" -> ChessPiece.PieceType.QUEEN;
@@ -229,8 +228,11 @@ public class GameplayUI {
             webSocketClient.sendMessage(json);
             System.out.println("Moved: " + tokens[1] + " to " + tokens[2]);
         }
+        catch(IllegalArgumentException exception){
+            System.out.println("Invalid format for position.");
+        }
         catch(Exception exception){
-            System.out.println("Invalid move format.");
+            System.out.println("Error creating or sending move.");
         }
     }
 
@@ -261,16 +263,19 @@ public class GameplayUI {
     }
 
     private chess.ChessPosition parsePosition(String pos){
-        if (pos.length() != 2) {
+        if (pos == null || pos.length() != 2) {
             throw new IllegalArgumentException("Invalid position");
         }
-        char col = pos.charAt(0);
-        char row = pos.charAt(1);
+        char file = pos.charAt(0);
+        char rank = pos.charAt(1);
+        if(file < 'a' || file > 'h' || rank < '1' || rank > '8'){
+            throw new IllegalArgumentException("Invalid position: " + pos);
+        }
 
-        int column = col - 'a' + 1;
-        int rowNum = Character.getNumericValue(row);
+        int column = file - 'a' + 1;
+        int row = Character.getNumericValue(rank);
 
-        return new chess.ChessPosition(rowNum, column);
+        return new chess.ChessPosition(row, column);
     }
 
     private boolean isPromotionMove(ChessPosition start, ChessPosition end){

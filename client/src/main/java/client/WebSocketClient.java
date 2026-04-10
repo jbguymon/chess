@@ -51,10 +51,4 @@ public class WebSocketClient {
             }
         }
     }
-
-    public void sendCommand(UserGameCommand command){
-        Gson gson = new Gson();
-        String json = gson.toJson(command);
-        sendMessage(json);
-    }
 }

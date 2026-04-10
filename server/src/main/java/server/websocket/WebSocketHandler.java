@@ -31,6 +31,7 @@ public class WebSocketHandler {
                 sendError(ctx, "Bad request: missing authToken or gameID");
                 return;
             }
+            System.out.println("Received command: " + baseCommand.getCommandType() + " for game " + baseCommand.getGameID());
             switch (baseCommand.getCommandType()) {
                 case CONNECT -> handleConnect(baseCommand, ctx);
                 case MAKE_MOVE -> {
